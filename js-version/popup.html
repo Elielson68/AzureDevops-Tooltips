@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Azure DevOps Tasks Updater</title>
+    <style>
+        body {
+            width: 350px;
+            padding: 15px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #106ebe;
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .success {
+            background-color: #dff6dd;
+            color: #107c10;
+        }
+
+        .error {
+            background-color: #fde7e9;
+            color: #a80000;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Azure DevOps Tasks Updater</h2>
+
+    <div class="form-group">
+        <label for="token">Token Azure:</label>
+        <input type="password" id="token" placeholder="Seu token de acesso pessoal">
+    </div>
+
+    <div class="form-group">
+        <label for="organization">Organização:</label>
+        <input type="text" id="organization" placeholder="Nome da organização">
+    </div>
+
+    <div class="form-group">
+        <label for="project">Projeto:</label>
+        <input type="text" id="project" placeholder="Nome do projeto">
+    </div>
+
+    <div class="form-group">
+        <label for="team">Time:</label>
+        <input type="text" id="team" placeholder="Nome do time">
+    </div>
+
+    <div class="form-group">
+        <label for="storyId">ID da Story/Bug:</label>
+        <input type="text" id="storyId" placeholder="Ex: 86474">
+    </div>
+
+    <button id="saveConfig">Salvar Configuração</button>
+    <button id="updateTasks">Atualizar Tasks</button>
+
+    <div id="loading" class="loading" style="display: none;">
+        <p>Processando, por favor aguarde...</p>
+    </div>
+
+    <div id="status"></div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

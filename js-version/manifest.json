@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Azure DevOps Tasks Updater",
+  "version": "1.0",
+  "description": "Atualiza tasks filhas no Azure DevOps",
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_encoding": "UTF-8",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "webRequest",
+    "https://dev.azure.com/*",
+    "https://*.visualstudio.com/*"
+  ],
+  "host_permissions": [
+    "https://dev.azure.com/*",
+    "https://*.visualstudio.com/*"
+  ]
+}
