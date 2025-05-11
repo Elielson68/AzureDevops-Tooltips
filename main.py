@@ -76,13 +76,25 @@ def get_my_id():
     id = user_info["authenticatedUser"]["id"]
     return id
 
+def get_works_prs_by_user(user_name="Elielson Barbosa"):
+    work_items = get_work_items_by_status(user_name)
+    user_id = get_user_id(user_name)
+    link_pr_by_user = GET_PRs_BY_USER.format(user_id=user_id)
+    result = requests.get(link_pr_by_user, headers=HEADERS).json()
+    prs_data = [{"pr_title": pr_data["title"], "pr_id": pr_data["pullRequestId"]} for pr_data in result["value"]]
+
+    works_items_with_prs = {
+        work_item_id: {
+            pr["pr_title"]: {
+                "title": pr["pr_title"],
+                "id": pr["pr_id"]
+            } for pr in prs_data if str(work_item_id) in pr["pr_title"]
+        } for work_item_id in work_items
+    }
+
+    return works_items_with_prs
+
+
+
 if __name__ == "__main__":
-    #update_all_tasks()
-    #print(get_work_items_by_status())
-
-    # user_id = get_user_id()
-    # result = requests.get(GET_PRs_BY_USER.format(user_id=user_id), headers=HEADERS)
-    # print(result.json())
-    # write_file(result.text)
-
-    pass
+    get_works_prs_by_user()
