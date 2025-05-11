@@ -71,6 +71,11 @@ def get_my_user_info():
     r = requests.get(GET_MY_USER, headers=HEADERS)
     return r.json()
 
+def get_my_id():
+    user_info = get_my_user_info()
+    id = user_info["authenticatedUser"]["id"]
+    return id
+
 if __name__ == "__main__":
     #update_all_tasks()
     #print(get_work_items_by_status())

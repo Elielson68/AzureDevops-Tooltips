@@ -17,9 +17,9 @@ repository_name = "YOUR REPOSITORY NAME"
 search_criteria = "searchCriteria.sourceRefName=refs/heads/{branch_name}&"
 
 GET_TASKS_FROM_STORY = f"{base_api_project_link}/_apis/wit/workitems/" + "{story_id}?$expand=Relations&api-version=7.1-preview.3"
-GET_PR_ID = f"{base_api_project_link}/_apis/git/repositories/" + "{repository_name}/pullrequests?api-version=7.1-preview.1"
+GET_PR_ID = f"{base_api_project_link}/_apis/git/repositories/" + "{repository_name}/pullrequests?api-version=7.1-preview.1".format(repository_name=repository_name)
 GET_USER_ID = f"https://vssps.dev.azure.com/{data_config['organization']}/_apis/identities?searchFilter=General&filterValue="+"{user_name}&api-version=7.1-preview.1"
 GET_MY_USER = f"{base_api_link}/_apis/connectionData?api-version=7.1-preview.1"
-GET_PRs_BY_USER = f"{base_api_project_link}/_apis/git/repositories/"+"{repository_name}/pullrequests?searchCriteria.creatorId="+"{user_id}&searchCriteria.status=active&api-version=7.1"
+GET_PRs_BY_USER = f"{base_api_project_link}/_apis/git/repositories/"+"{repository_name}/pullrequests?searchCriteria.creatorId=".format(repository_name=repository_name)+"{user_id}&searchCriteria.status=active&api-version=7.1"
 USER_INFO_BY_NAME = f"https://vsaex.dev.azure.com/{data_config['organization']}/_apis/userentitlements?$filter=name+eq+%27" + "{user_name}%27&api-version=7.1-preview.4"
 USER_WORK_ITEMS = f"{base_api_project_link}/_apis/wit/wiql?api-version=7.1"
