@@ -3,7 +3,7 @@ function isAzureDevOpsPage() {
     window.location.hostname.includes('dev.azure.com');
 }
 
-async function initializeModal(modulePath) {
+async function initializeModule(modulePath) {
   try {
     const module = await import(chrome.runtime.getURL(modulePath));
     module.StartModule();
@@ -12,4 +12,5 @@ async function initializeModal(modulePath) {
   }
 }
 
-initializeModal('scripts/modal.js');
+initializeModule('scripts/modal.js');
+initializeModule('scripts/api_azure.js');
