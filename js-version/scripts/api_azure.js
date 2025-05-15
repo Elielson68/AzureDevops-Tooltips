@@ -15,7 +15,7 @@ export function StartModule() {
     }
 
     const auth_token = btoa(`:${data_config.token_azure}`);
-    const HEADERS = { 'Authorization': `Basic ${auth_token}` };
+    const HEADERS = { 'Authorization': `Basic ${auth_token}`, 'Content-Type': 'application/json', };
 
     const base_api_link = `https://dev.azure.com/${data_config.organization}`;
     const base_api_project_link = `${base_api_link}/${data_config.project}`;
@@ -41,18 +41,15 @@ export function StartModule() {
     });
 
     async function getRequest(uri) {
-        const response = await fetch(uri, headerGetRequest);
-        return response;
+        return await fetch(uri, headerGetRequest);
     }
 
     async function pathRequest(uri, data) {
-        const response = await fetch(uri, headerPathRequest(data));
-        return response;
+        return await fetch(uri, headerPathRequest(data));
     }
 
     async function postRequest(uri, data) {
-        const response = await fetch(uri, headerPostRequest(data));
-        return response;
+        return await fetch(uri, headerPostRequest(data));
     }
 
     const GET_WORK_ITEM_DATA = (story_id) =>
@@ -127,9 +124,8 @@ export function StartModule() {
         ];
 
         try {
-            const response = await pathRequest(task_url, update_payload);
-            console.log("Status Code:", response.status);
-            console.log("Response:", await response.json());
+            await pathRequest(task_url, update_payload);
+            console.log("Updated successfully");
         } catch (error) {
             console.error("Error updating task:", error);
         }
@@ -278,7 +274,6 @@ export function StartModule() {
             tasks_responses.map(response => response.json())
         );
 
-        console.log(tasks);
         const filtered_tasks = tasks.filter(
             task => task.fields['System.WorkItemType'] === 'Task' && task.fields['System.State'] === 'Closed'
         );
