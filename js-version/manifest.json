@@ -9,6 +9,7 @@
         "*://dev.azure.com/*",
         "*://*.visualstudio.com/*"
       ],
+      "type": "module",
       "js": [
         "content.js"
       ],
@@ -16,6 +17,16 @@
         "styles.css"
       ],
       "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "scripts/modal.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "icons": {
