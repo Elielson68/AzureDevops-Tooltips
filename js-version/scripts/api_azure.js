@@ -280,4 +280,53 @@ export function StartModule() {
 
         return filtered_tasks;
     }
+
+    async function getAllTeams() {
+        const url = `https://dev.azure.com/${data_config.organization}/_apis/projects/${data_config.project}/teams?api-version=7.1`;
+
+        try {
+            const response = await getRequest(url);
+            const data = await response.json();
+            return data.value;
+        } catch (error) {
+            console.error('Erro ao obter times:', error);
+            return [];
+        }
+    }
+
+    async function getTeamMembers(teamId) {
+        const url = `https://dev.azure.com/${data_config.organization}/_apis/projects/${data_config.project}/teams/${teamId}/members?api-version=7.1`;
+
+        try {
+            const response = await getRequest(url);
+            const data = await response.json();
+            return data.value;
+        } catch (error) {
+            console.error('Erro ao obter membros do time:', error);
+            return [];
+        }
+    }
+
+    async function getAllTeamMembers() {
+        const teams = await getAllTeams();
+        const team = teams.find(t => t.name === data_config.team);
+
+        if (team) {
+            return await getTeamMembers(team.id);
+        }
+        return [];
+
+    }
+
+    getAllTeamMembers()
+        .then(members => {
+            console.log('Membros do time:', members);
+            members.forEach(member => {
+                console.log(`- ${member.identity.displayName} (${member.identity.uniqueName})`);
+            });
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+        });
 }
+
