@@ -5,6 +5,7 @@ export function StartModule() {
         "token_azure": "token azure",
         "organization": "org name",
         "project": "project name",
+        "team": "team name",
         "repositories": {
             "repo1": {
                 "valid": false,
