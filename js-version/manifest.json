@@ -22,7 +22,11 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "scripts/modal.js"
+        "scripts/module_manager.mjs",
+        "scripts/view/modal.mjs",
+        "scripts/model/api_links.mjs",
+        "scripts/model/api_azure.mjs",
+        "scripts/model/requests.mjs"
       ],
       "matches": [
         "<all_urls>"

@@ -208,7 +208,7 @@ export function StartModule() {
         setTimeout(() => {
 
             CheckWorkItemOpen();
-            if (isWorkItemOpen !== boltPortalHostContent.hasChildNodes()) {
+            if (boltPortalHostContent !== null && isWorkItemOpen !== boltPortalHostContent.hasChildNodes()) {
                 isWorkItemOpen = boltPortalHostContent.hasChildNodes();
                 if (isWorkItemOpen) {
                     UpdateStateOnOpenWorkItem();

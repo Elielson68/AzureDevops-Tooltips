@@ -1,87 +1,14 @@
+import * as api_links from "./api_links.mjs";
+import * as requests from "./requests.mjs";
+
+
 export function StartModule() {
-    const data_config = {
-        "path_browser_user_profile": "",
-        "actual_user_display_name": "Elielson Barbosa",
-        "token_azure": "token azure",
-        "organization": "org name",
-        "project": "project name",
-        "team": "team name",
-        "repositories": {
-            "repo1": {
-                "valid": false,
-                "creation_status_message": "",
-                "type_repo": "principal"
-            }
-        }
-    }
-
-    const auth_token = btoa(`:${data_config.token_azure}`);
-    const HEADERS = { 'Authorization': `Basic ${auth_token}`, 'Content-Type': 'application/json', };
-
-    const base_api_link = `https://dev.azure.com/${data_config.organization}`;
-    const base_api_project_link = `${base_api_link}/${data_config.project}`;
-
-    const repository_name = "repositório";
-    const search_criteria = (branch_name) => `searchCriteria.sourceRefName=refs/heads/${branch_name}&`;
     let pr_data_global = {};
-
-    const headerGetRequest = {
-        headers: HEADERS
-    };
-
-    const headerPathRequest = (data) => ({
-        method: 'PATCH',
-        headers: HEADERS,
-        body: JSON.stringify(data)
-    });
-
-    const headerPostRequest = (data) => ({
-        method: 'POST',
-        headers: HEADERS,
-        body: JSON.stringify(data)
-    });
-
-    async function getRequest(uri) {
-        return await fetch(uri, headerGetRequest);
-    }
-
-    async function pathRequest(uri, data) {
-        return await fetch(uri, headerPathRequest(data));
-    }
-
-    async function postRequest(uri, data) {
-        return await fetch(uri, headerPostRequest(data));
-    }
-
-    const GET_WORK_ITEM_DATA = (story_id) =>
-        `${base_api_project_link}/_apis/wit/workitems/${story_id}?$expand=Relations&api-version=7.1-preview.3`;
-
-    const GET_PR_ID =
-        `${base_api_project_link}/_apis/git/repositories/${repository_name}/pullrequests?api-version=7.1-preview.1`;
-
-    const GET_USER_ID = (user_name) =>
-        `https://vssps.dev.azure.com/${data_config.organization}/_apis/identities?searchFilter=General&filterValue=${user_name}&api-version=7.1-preview.1`;
-
-    const GET_MY_USER =
-        `${base_api_link}/_apis/connectionData?api-version=7.1-preview.1`;
-
-    const GET_PRs_BY_USER = (user_id) =>
-        `${base_api_project_link}/_apis/git/repositories/${repository_name}/pullrequests?searchCriteria.creatorId=${user_id}&searchCriteria.status=active&api-version=7.1`;
-
-    const WORK_ITEM_INFO = (work_item_id) =>
-        `${base_api_project_link}/_apis/wit/workItems/${work_item_id}?api-version=7.1-preview.3`;
-
-    const USER_INFO_BY_NAME = (user_name) =>
-        `https://vsaex.dev.azure.com/${data_config.organization}/_apis/userentitlements?$filter=name+eq+%27${user_name}%27&api-version=7.1-preview.4`;
-
-    const USER_WORK_ITEMS =
-        `${base_api_project_link}/_apis/wit/wiql?api-version=7.1`;
-
 
     async function updateTasks() {
         try {
 
-            const storyResponse = await getRequest(GET_USER_ID("Elielson Barbosa"));
+            const storyResponse = await requests.get(api_links.GET_USER_ID("Elielson Barbosa"));
 
             if (!storyResponse.ok) {
                 throw new Error(`Erro ao buscar Story: ${storyResponse.status}`);
@@ -97,7 +24,7 @@ export function StartModule() {
 
     async function getWorkItemData(storyId) {
         try {
-            const response = await getRequest(GET_WORK_ITEM_DATA(storyId));
+            const response = await requests.get(api_links.GET_WORK_ITEM_DATA(storyId));
             return await response.json();
         } catch (error) {
             console.error("Error fetching story data:", error);
@@ -125,7 +52,7 @@ export function StartModule() {
         ];
 
         try {
-            await pathRequest(task_url, update_payload);
+            await requests.path(task_url, update_payload);
             console.log("Updated successfully");
         } catch (error) {
             console.error("Error updating task:", error);
@@ -142,7 +69,7 @@ export function StartModule() {
         ];
 
         try {
-            await pathRequest(WORK_ITEM_INFO(work_item_id), update_payload);
+            await requests.path(api_links.WORK_ITEM_INFO(work_item_id), update_payload);
             console.log("Updated successfully");
         } catch (error) {
             console.error("Error updating work item state:", error);
@@ -164,7 +91,7 @@ export function StartModule() {
         };
 
         try {
-            const response = await postRequest(USER_WORK_ITEMS, query);
+            const response = await requests.post(api_links.USER_WORK_ITEMS, query);
             const data = await response.json();
             return data.workItems.map(item => item.id);
         } catch (error) {
@@ -175,7 +102,7 @@ export function StartModule() {
 
     async function getUserId(user_name = "Elielson Barbosa") {
         try {
-            const response = await getRequest(GET_USER_ID(user_name));
+            const response = await requests.get(api_links.GET_USER_ID(user_name));
             const data = await response.json();
             return data.value[0].id;
         } catch (error) {
@@ -186,7 +113,7 @@ export function StartModule() {
 
     async function getMyUserInfo() {
         try {
-            const response = await getRequest(GET_MY_USER);
+            const response = await requests.get(api_links.GET_MY_USER);
             return await response.json();
         } catch (error) {
             console.error("Error getting user info:", error);
@@ -211,10 +138,10 @@ export function StartModule() {
     async function getWorksPrsByUser(user_name = "Elielson Barbosa") {
         const work_items = await getWorkItemsByStatus(user_name);
         const user_id = await getUserId(user_name);
-        const link_pr_by_user = GET_PRs_BY_USER(user_id);
+        const link_pr_by_user = api_links.GET_PRs_BY_USER(user_id);
 
         try {
-            const response = await getRequest(link_pr_by_user);
+            const response = await requests.get(link_pr_by_user);
             const result = await response.json() || { value: [] };
             const prs_data = result.value.map(pr_data => getPrDataFormatted(pr_data));
 
@@ -245,7 +172,7 @@ export function StartModule() {
         for (const work_item_id in pr_data_global) {
             for (const pr_title in pr_data_global[work_item_id]) {
                 try {
-                    const response = await getRequest(pr_data_global[work_item_id][pr_title].url);
+                    const response = await requests.get(pr_data_global[work_item_id][pr_title].url);
                     const data = await response.json();
                     pr_data_global[work_item_id][pr_title] = {
                         ...pr_data_global[work_item_id][pr_title],
@@ -258,7 +185,6 @@ export function StartModule() {
         }
     }
 
-    // Função para inicialização
     async function getClosedTasksFromWorkItem(workItemId) {
         const story_data = await getWorkItemData(workItemId);
         if (!story_data) return;
@@ -266,9 +192,8 @@ export function StartModule() {
         const tasks_data = story_data.relations;
         const tasks_links = tasks_data.map(task => task.url);
 
-        // Fetch all tasks in parallel
         const tasks_responses = await Promise.all(
-            tasks_links.map(link => getRequest(link))
+            tasks_links.map(link => requests.get(link))
         );
 
         const tasks = await Promise.all(
@@ -283,10 +208,10 @@ export function StartModule() {
     }
 
     async function getAllTeams() {
-        const url = `https://dev.azure.com/${data_config.organization}/_apis/projects/${data_config.project}/teams?api-version=7.1`;
+        const url = `https://dev.azure.com/${api_links.data_config.organization}/_apis/projects/${api_links.data_config.project}/teams?api-version=7.1`;
 
         try {
-            const response = await getRequest(url);
+            const response = await requests.get(url);
             const data = await response.json();
             return data.value;
         } catch (error) {
@@ -296,10 +221,10 @@ export function StartModule() {
     }
 
     async function getTeamMembers(teamId) {
-        const url = `https://dev.azure.com/${data_config.organization}/_apis/projects/${data_config.project}/teams/${teamId}/members?api-version=7.1`;
+        const url = `https://dev.azure.com/${api_links.data_config.organization}/_apis/projects/${api_links.data_config.project}/teams/${teamId}/members?api-version=7.1`;
 
         try {
-            const response = await getRequest(url);
+            const response = await requests.get(url);
             const data = await response.json();
             return data.value;
         } catch (error) {
@@ -310,7 +235,7 @@ export function StartModule() {
 
     async function getAllTeamMembers() {
         const teams = await getAllTeams();
-        const team = teams.find(t => t.name === data_config.team);
+        const team = teams.find(t => t.name === api_links.data_config.team);
 
         if (team) {
             return await getTeamMembers(team.id);
