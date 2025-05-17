@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -7,8 +7,36 @@
     <style>
         body {
             width: 350px;
-            padding: 15px;
+            padding: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: #f3f2f1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-tab {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-right: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .nav-tab.active {
+            background-color: #0078d7;
+            color: white;
+        }
+
+        .tab-content {
+            padding: 15px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .form-group {
@@ -67,45 +95,252 @@
             text-align: center;
             margin: 10px 0;
         }
+
+        /* Adicione estes estilos */
+        #mainReposDropdown {
+            margin-bottom: 10px;
+        }
+
+        .repo-item button {
+            width: auto;
+            padding: 4px 8px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        /* Adicione esses estilos */
+        .dropdown-with-actions {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            background: white;
+        }
+
+        select[multiple],
+        select[size] {
+            min-height: 100px;
+            border: 1px solid #ccc;
+        }
+
+        button.danger {
+            background-color: #a4262c;
+        }
+
+        button.danger:hover {
+            background-color: #8a1c22;
+        }
+
+        #repos {
+            max-height: 500px;
+            /* ou qualquer altura que faça sentido para seu popup */
+            overflow-y: auto;
+            /* scroll vertical quando necessário */
+            padding-right: 5px;
+            /* evita que o conteúdo toque na barra de scroll */
+        }
+
+        /* Estilizando a barra de scroll (opcional) */
+        #repos::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #repos::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #repos::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        #repos::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            background-color: #fff;
+            border: 2px solid #0078d7;
+            border-radius: 50%;
+        }
+
+        .radio-option:hover input~.radio-checkmark {
+            background-color: #f1f1f1;
+        }
+
+        .radio-option input:checked~.radio-checkmark {
+            background-color: #0078d7;
+        }
+
+        .radio-checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .radio-option input:checked~.radio-checkmark:after {
+            display: block;
+        }
+
+        .radio-option .radio-checkmark:after {
+            top: 3px;
+            left: 3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
     </style>
 </head>
 
 <body>
-    <h2>Azure DevOps Tasks Updater</h2>
-
-    <div class="form-group">
-        <label for="token">Token Azure:</label>
-        <input type="password" id="token" placeholder="Seu token de acesso pessoal">
+    <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="main">Tasks</div>
+        <div class="nav-tab" data-tab="config">Configurações</div>
+        <div class="nav-tab" data-tab="repos">Repositórios</div>
     </div>
 
-    <div class="form-group">
-        <label for="organization">Organização:</label>
-        <input type="text" id="organization" placeholder="Nome da organização">
+    <!-- Página Principal -->
+    <div id="main" class="tab-content active">
+        <h2>Azure DevOps Tasks Updater</h2>
+
+        <div class="form-group">
+            <label for="token">Token Azure:</label>
+            <input type="password" id="token" placeholder="Seu token de acesso pessoal">
+        </div>
+
+        <div class="form-group">
+            <label for="storyId">ID da Story/Bug:</label>
+            <input type="text" id="storyId" placeholder="Ex: 86474">
+        </div>
+
+        <button type="button" id="updateTasks">Atualizar Tasks</button>
+
+        <div id="loading" class="loading" style="display: none;">
+            <p>Processando, por favor aguarde...</p>
+        </div>
+
+        <div id="status"></div>
     </div>
 
-    <div class="form-group">
-        <label for="project">Projeto:</label>
-        <input type="text" id="project" placeholder="Nome do projeto">
+    <!-- Página de Configurações -->
+    <div id="config" class="tab-content">
+        <h2>Configurações de time</h2>
+
+        <div class="form-group">
+            <label for="organization">Organização:</label>
+            <select id="organization">
+                <option value="">Carregando organizações...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="project">Projeto:</label>
+            <select id="project" disabled>
+                <option value="">Selecione uma organização primeiro</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="team">Time:</label>
+            <select id="team" disabled>
+                <option value="">Selecione um projeto primeiro</option>
+            </select>
+        </div>
+        <button type="button" id="saveConfig">Salvar Configuração</button>
     </div>
 
-    <div class="form-group">
-        <label for="team">Time:</label>
-        <input type="text" id="team" placeholder="Nome do time">
+    <!-- Nova Página de Repositórios -->
+    <div id="repos" class="tab-content">
+        <h2>Gerenciamento de Repositórios</h2>
+
+        <div class="form-group">
+            <label for="availableRepos">Adicionar Repositório Principal:</label>
+            <select id="availableRepos">
+                <option value="">Carregando repositórios...</option>
+            </select>
+            <button type="button" id="addMainRepo" class="secondary">Adicionar</button>
+        </div>
+
+        <div class="form-group">
+            <label for="mainReposDropdown">Repositórios Principais Adicionados:</label>
+            <div class="dropdown-with-actions">
+                <select id="mainReposDropdown" size="5" style="width: 100%; margin-bottom: 5px;">
+                    <!-- Itens serão preenchidos via JavaScript -->
+                </select>
+                <button type="button" id="removeRepoBtn" class="danger" style="width: 100%;">Remover
+                    Selecionado</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="repoConfig" style="display: block;">
+            <h3>Configurar Repositório: <span id="currentRepoName"></span></h3>
+
+            <div class="form-group">
+                <label for="configureDropdown">Selecione para Configurar:</label>
+                <select id="configureDropdown">
+                    <option value="">Selecione um repositório...</option>
+                </select>
+                <button type="button" id="configureRepoBtn">Configurar</button>
+            </div>
+
+            <div class="form-group">
+                <label for="availableSubmodules">Adicionar repositório vinculado:</label>
+                <select id="availableSubmodules">
+                    <option value="">Selecione um repositório...</option>
+                </select>
+                <label>Tipo de Repositório Vinculado:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="repoType" value="submodules" checked>
+                        <span class="radio-checkmark"></span>
+                        Submodules
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="repoType" value="packages">
+                        <span class="radio-checkmark"></span>
+                        Packages
+                    </label>
+                </div>
+                <button type="button" id="addSubmodule">Adicionar</button>
+            </div>
+
+            <div class="form-group">
+                <label>Submodules:</label>
+                <div class="repo-list" id="submodulesList"></div>
+            </div>
+
+            <button type="button" id="saveRepoConfig">Salvar Configuração</button>
+            <button type="button" id="backToRepos" class="secondary">Voltar</button>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="storyId">ID da Story/Bug:</label>
-        <input type="text" id="storyId" placeholder="Ex: 86474">
-    </div>
-
-    <button id="saveConfig">Salvar Configuração</button>
-    <button id="updateTasks">Atualizar Tasks</button>
-
-    <div id="loading" class="loading" style="display: none;">
-        <p>Processando, por favor aguarde...</p>
-    </div>
-
-    <div id="status"></div>
 
     <script src="popup.js"></script>
 </body>
