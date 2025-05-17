@@ -207,7 +207,9 @@ document.querySelector('.nav-tab[data-tab="config"]').addEventListener('click', 
 
 // Carregar projetos quando uma organização for selecionada
 document.getElementById('organization').addEventListener('change', async function () {
-    const token = document.getElementById('token').value || document.getElementById('configToken').value;
+    const configTokenInput = document.getElementById('configToken');
+    const tokenInput = document.getElementById('token');
+    const token = (tokenInput && tokenInput.value) || (configTokenInput && configTokenInput.value);
     const org = this.value;
 
     if (org) {
@@ -224,7 +226,9 @@ document.getElementById('organization').addEventListener('change', async functio
 
 // Carregar times quando um projeto for selecionado
 document.getElementById('project').addEventListener('change', async function () {
-    const token = document.getElementById('token').value || document.getElementById('configToken').value;
+    const configTokenInput = document.getElementById('configToken');
+    const tokenInput = document.getElementById('token');
+    const token = (tokenInput && tokenInput.value) || (configTokenInput && configTokenInput.value);
     const org = document.getElementById('organization').value;
     const project = this.value;
 
@@ -278,7 +282,8 @@ function populateSelect(selectId, items) {
 
 // Salvar configuração
 document.getElementById('saveConfig').addEventListener('click', () => {
-    const token = document.getElementById('configToken').value;
+    const configTokenInput = document.getElementById('configToken');
+    const token = (configTokenInput && configTokenInput.value);
     const org = document.getElementById('organization').value;
     const project = document.getElementById('project').value;
     const team = document.getElementById('team').value;
@@ -304,7 +309,9 @@ let repositoriesData = {
 
 // Quando a aba de repositórios é aberta
 document.querySelector('.nav-tab[data-tab="repos"]').addEventListener('click', async () => {
-    const token = document.getElementById('token').value || document.getElementById('configToken').value;
+    const configTokenInput = document.getElementById('configToken');
+    const tokenInput = document.getElementById('token');
+    const token = (tokenInput && tokenInput.value) || (configTokenInput && configTokenInput.value);
 
     if (!token) {
         alert('Por favor, insira o token na página principal primeiro');
@@ -377,19 +384,6 @@ document.getElementById('addSubmodule').addEventListener('click', () => {
     }
 });
 
-// Adicionar package
-document.getElementById('addPackage').addEventListener('click', () => {
-    const repoId = document.querySelector('#repoConfig').getAttribute('data-current-repo');
-    const packageId = document.getElementById('availablePackages').value;
-
-    if (packageId && !repositoriesData.repoConfigs[repoId].packages.includes(packageId)) {
-        repositoriesData.repoConfigs[repoId].packages.push(packageId);
-        saveRepositoriesData();
-        updateLinkedReposLists(repoId);
-        updateAvailableLinkedReposDropdowns(repoId);
-    }
-});
-
 // Funções auxiliares
 async function fetchRepositories(token) {
     // Implemente a chamada à API para obter os repositórios
@@ -445,6 +439,7 @@ function updateMainReposDropdown() {
 function loadMainReposList() {
     const dropdown = document.getElementById('mainReposDropdown');
     const configureDropdown = document.getElementById('configureDropdown');
+    configureDropdown.addEventListener("change", onSelectRepositoryToConfigure);
 
     // Limpa os dropdowns
     dropdown.innerHTML = '';
@@ -475,8 +470,8 @@ function updateLinkedReposLists(repoId) {
     const config = repositoriesData.repoConfigs[repoId] || { submodules: [], packages: [] };
 
     // Atualiza lista de submodules
-    const submodulesList = document.getElementById('submodulesList');
-    submodulesList.innerHTML = '';
+    const linkedReposList = document.getElementById('linkedReposList');
+    linkedReposList.innerHTML = '';
 
     config.submodules.forEach(submoduleId => {
         const repo = repositoriesData.allRepos.find(r => r.id === submoduleId);
@@ -488,12 +483,8 @@ function updateLinkedReposLists(repoId) {
             <span>${repo.name}</span>
             <button class="remove-linked-repo" data-repo-id="${submoduleId}" data-type="submodules">Remover</button>
         `;
-        submodulesList.appendChild(item);
+        linkedReposList.appendChild(item);
     });
-
-    // Atualiza lista de packages
-    const packagesList = document.getElementById('packagesList');
-    packagesList.innerHTML = '';
 
     config.packages.forEach(packageId => {
         const repo = repositoriesData.allRepos.find(r => r.id === packageId);
@@ -501,11 +492,8 @@ function updateLinkedReposLists(repoId) {
 
         const item = document.createElement('div');
         item.className = 'repo-item linked-repo-type';
-        item.innerHTML = `
-            <span>${repo.name}</span>
-            <button class="remove-linked-repo" data-repo-id="${packageId}" data-type="packages">Remover</button>
-        `;
-        packagesList.appendChild(item);
+        item.innerHTML = `<span>${repo.name}</span>
+        <button class="remove-linked-repo" data-repo-id="${packageId}" data-type="packages">Remover</button>`;
     });
 
     // Adiciona eventos aos botões de remover
@@ -579,27 +567,32 @@ function getSelectedRepoType() {
     return document.querySelector('input[name="repoType"]:checked').value;
 }
 
-// Exemplo de uso
-document.getElementById('addLinkedRepo').addEventListener('click', () => {
-    const repoType = getSelectedRepoType();
-    const repoId = document.getElementById('linkedReposDropdown').value;
 
-    if (repoId) {
-        if (repoType === 'submodules') {
-            // Adicionar como submodule
-            repositoriesData.repoConfigs[currentRepoId].submodules.push(repoId);
-        } else {
-            // Adicionar como package
-            repositoriesData.repoConfigs[currentRepoId].packages.push(repoId);
-        }
-        saveRepositoriesData();
-        updateLinkedReposLists(currentRepoId);
-        updateAvailableLinkedReposDropdowns(currentRepoId);
-    }
-});
+function onSelectRepositoryToConfigure(evt) {
+    document.getElementById("repoConfig-content").style.display = evt.target.value !== "" ? "block" : "none";
+}
+
+// Exemplo de uso
+// document.getElementById('addLinkedRepo').addEventListener('click', () => {
+//     const repoType = getSelectedRepoType();
+//     const repoId = document.getElementById('linkedReposDropdown').value;
+
+//     if (repoId) {
+//         if (repoType === 'submodules') {
+//             // Adicionar como submodule
+//             repositoriesData.repoConfigs[currentRepoId].submodules.push(repoId);
+//         } else {
+//             // Adicionar como package
+//             repositoriesData.repoConfigs[currentRepoId].packages.push(repoId);
+//         }
+//         saveRepositoriesData();
+//         updateLinkedReposLists(currentRepoId);
+//         updateAvailableLinkedReposDropdowns(currentRepoId);
+//     }
+// });
 
 // Adicione este evento para o botão de configurar:
-document.getElementById('configureRepoBtn').addEventListener('click', () => {
+document.getElementById('saveRepoConfig').addEventListener('click', () => {
     const repoId = document.getElementById('mainReposDropdown').value;
     if (repoId) {
         setupRepoConfig(repoId);

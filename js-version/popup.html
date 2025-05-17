@@ -99,6 +99,7 @@
         /* Adicione estes estilos */
         #mainReposDropdown {
             margin-bottom: 10px;
+            height: 20%;
         }
 
         .repo-item button {
@@ -208,10 +209,10 @@
         }
 
         .radio-option .radio-checkmark:after {
-            top: 3px;
-            left: 3px;
-            width: 8px;
-            height: 8px;
+            top: 4px;
+            left: 4px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: white;
         }
@@ -300,7 +301,7 @@
 
         <hr>
 
-        <div id="repoConfig" style="display: block;">
+        <div id="repoConfig">
             <h3>Configurar Repositório: <span id="currentRepoName"></span></h3>
 
             <div class="form-group">
@@ -308,37 +309,38 @@
                 <select id="configureDropdown">
                     <option value="">Selecione um repositório...</option>
                 </select>
-                <button type="button" id="configureRepoBtn">Configurar</button>
             </div>
 
-            <div class="form-group">
-                <label for="availableSubmodules">Adicionar repositório vinculado:</label>
-                <select id="availableSubmodules">
-                    <option value="">Selecione um repositório...</option>
-                </select>
-                <label>Tipo de Repositório Vinculado:</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="repoType" value="submodules" checked>
-                        <span class="radio-checkmark"></span>
-                        Submodules
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="repoType" value="packages">
-                        <span class="radio-checkmark"></span>
-                        Packages
-                    </label>
+            <div id="repoConfig-content" style="display: none;">
+                <div class="form-group">
+                    <label for="availableSubmodules">Adicionar repositório vinculado:</label>
+                    <select id="availableSubmodules">
+                        <option value="">Selecione um repositório...</option>
+                    </select>
+                    <label>Tipo de Repositório Vinculado:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="repoType" value="submodules" checked>
+                            <span class="radio-checkmark"></span>
+                            Submodules
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="repoType" value="packages">
+                            <span class="radio-checkmark"></span>
+                            Packages
+                        </label>
+                    </div>
+                    <button type="button" id="addSubmodule">Adicionar</button>
                 </div>
-                <button type="button" id="addSubmodule">Adicionar</button>
-            </div>
 
-            <div class="form-group">
-                <label>Submodules:</label>
-                <div class="repo-list" id="submodulesList"></div>
-            </div>
+                <div class="form-group">
+                    <label>Repositórios vinculados:</label>
+                    <div class="repo-list" id="linkedReposList"></div>
+                </div>
 
-            <button type="button" id="saveRepoConfig">Salvar Configuração</button>
-            <button type="button" id="backToRepos" class="secondary">Voltar</button>
+                <button type="button" id="saveRepoConfig">Salvar Configuração</button>
+                <button type="button" id="backToRepos" class="secondary">Voltar</button>
+            </div>
         </div>
     </div>
 
