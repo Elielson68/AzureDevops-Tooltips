@@ -23,10 +23,15 @@
     {
       "resources": [
         "scripts/module_manager.mjs",
-        "scripts/view/modal.mjs",
         "scripts/model/api_links.mjs",
         "scripts/model/api_azure.mjs",
-        "scripts/model/requests.mjs"
+        "scripts/model/requests.mjs",
+        "scripts/view/modal.mjs",
+        "scripts/view/js/popup/initialize_tabs.mjs",
+        "scripts/view/js/popup.mjs",
+        "scripts/view/html/popup/main.html",
+        "scripts/view/html/popup/organization.html",
+        "scripts/view/html/popup/repositorys.html"
       ],
       "matches": [
         "<all_urls>"
@@ -38,7 +43,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "/scripts/view/html/popup.html",
     "default_encoding": "UTF-8",
     "default_icon": {
       "48": "icons/icon48.png",
