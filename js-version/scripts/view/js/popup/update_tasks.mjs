@@ -7,7 +7,7 @@ async function updateTasks() {
 
     // Mostra loading
     document.getElementById('loading').style.display = 'block';
-    document.getElementById('updateTasks').disabled = true;
+    document.getElementById('storyId').disabled = true;
 
     try {
         // Recupera configurações
@@ -114,8 +114,19 @@ async function updateTasks() {
         showStatus(error.message, 'error');
     } finally {
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('updateTasks').disabled = false;
+        document.getElementById('storyId').disabled = false;
     }
+}
+
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('status');
+    statusDiv.textContent = message;
+    statusDiv.className = type;
+    statusDiv.style.display = 'block';
+
+    setTimeout(() => {
+        statusDiv.style.display = 'none';
+    }, 5000);
 }
 
 document.getElementById('update').addEventListener('click', updateTasks);
