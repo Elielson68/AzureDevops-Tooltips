@@ -26,12 +26,7 @@
         "scripts/model/api_links.mjs",
         "scripts/model/api_azure.mjs",
         "scripts/model/requests.mjs",
-        "scripts/view/modal.mjs",
-        "scripts/view/js/popup/initialize_tabs.mjs",
-        "scripts/view/js/popup.mjs",
-        "scripts/view/html/popup/main.html",
-        "scripts/view/html/popup/organization.html",
-        "scripts/view/html/popup/repositorys.html"
+        "scripts/view/modal.mjs"
       ],
       "matches": [
         "<all_urls>"
