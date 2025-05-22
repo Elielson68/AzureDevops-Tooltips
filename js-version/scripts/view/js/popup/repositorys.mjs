@@ -5,6 +5,7 @@ async function initializeScreen() {
     let repositoriesData = {
         allRepos: [],
         mainRepos: [],
+        linkedRepos: [],
         repoConfigs: {}
     };
     let currentRepoId = null;
@@ -27,9 +28,9 @@ async function initializeScreen() {
         // Atualiza listas
         updateLinkedReposLists(repoId);
         updateAvailableLinkedReposDropdowns(repoId);
+        updateAvailableReposDropdown();
 
         // Mostra a tela de configuração
-        document.getElementById('repositorys').querySelector('.form-group:not(#repoConfig)').style.display = 'none';
         document.getElementById('repoConfig').style.display = 'block';
     }
 
@@ -46,7 +47,7 @@ async function initializeScreen() {
 
     function updateAvailableReposDropdown() {
         const availableRepos = repositoriesData.allRepos
-            .filter(repo => !repositoriesData.mainRepos.includes(repo.id));
+            .filter(repo => !repositoriesData.mainRepos.includes(repo.id) && !repositoriesData.linkedRepos.includes(repo.id));
 
         const select = document.getElementById('availableRepos');
         select.innerHTML = '';
@@ -61,27 +62,6 @@ async function initializeScreen() {
             option.value = repo.id;
             option.textContent = repo.name;
             select.appendChild(option);
-        });
-    }
-
-    // Adicione estas novas funções:
-    function updateMainReposDropdown() {
-        const dropdown = document.getElementById('mainReposDropdown');
-        dropdown.innerHTML = '';
-
-        if (repositoriesData.mainRepos.length === 0) {
-            dropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
-            return;
-        }
-
-        repositoriesData.mainRepos.forEach(repoId => {
-            const repo = repositoriesData.allRepos.find(r => r.id === repoId);
-            if (!repo) return;
-
-            const option = document.createElement('option');
-            option.value = repoId;
-            option.textContent = repo.name;
-            dropdown.appendChild(option);
         });
     }
 
@@ -113,7 +93,6 @@ async function initializeScreen() {
             configureDropdown.appendChild(option);
         });
     }
-
 
     function updateLinkedReposLists(repoId) {
         const config = repositoriesData.repoConfigs[repoId] || { submodules: [], packages: [] };
@@ -154,9 +133,12 @@ async function initializeScreen() {
                 repositoriesData.repoConfigs[repoId][type] =
                     repositoriesData.repoConfigs[repoId][type].filter(id => id !== linkedRepoId);
 
+                repositoriesData.linkedRepos = repositoriesData.linkedRepos.filter(id => id !== linkedRepoId);
                 saveRepositoriesData();
                 updateLinkedReposLists(repoId);
                 updateAvailableLinkedReposDropdowns(repoId);
+                updateAvailableReposDropdown();
+
             });
         });
     }
@@ -203,6 +185,9 @@ async function initializeScreen() {
         document.getElementById("repoConfig-content").style.display = evt.target.value !== "" ? "block" : "none";
         currentRepoId = evt.target.value;
         updateAvailableLinkedReposDropdowns(currentRepoId);
+        updateLinkedReposLists(currentRepoId);
+        updateAvailableLinkedReposDropdowns(currentRepoId);
+        updateAvailableReposDropdown();
     }
 
     // Adicionar repositório principal
@@ -214,6 +199,8 @@ async function initializeScreen() {
             repositoriesData.mainRepos.push(repoId);
             saveRepositoriesData();
             loadMainReposList();
+            updateLinkedReposLists(currentRepoId);
+            updateAvailableLinkedReposDropdowns(currentRepoId);
             updateAvailableReposDropdown();
         }
     });
@@ -232,9 +219,11 @@ async function initializeScreen() {
                 // Adicionar como package
                 repositoriesData.repoConfigs[currentRepoId].packages.push(repoId);
             }
+            repositoriesData.linkedRepos.push(repoId);
             saveRepositoriesData();
             updateLinkedReposLists(currentRepoId);
             updateAvailableLinkedReposDropdowns(currentRepoId);
+            updateAvailableReposDropdown();
         }
     });
 
@@ -255,6 +244,8 @@ async function initializeScreen() {
             // Salva e atualiza a UI
             saveRepositoriesData();
             loadMainReposList();
+            updateLinkedReposLists(currentRepoId);
+            updateAvailableLinkedReposDropdowns(currentRepoId);
             updateAvailableReposDropdown();
 
             // Se estava configurando este repositório, volta para a lista
@@ -267,21 +258,23 @@ async function initializeScreen() {
         }
     });
 
-    // Voltar para lista principal
-    document.getElementById('backToRepos').addEventListener('click', () => {
-        document.getElementById('repoConfig').style.display = 'none';
-        document.getElementById('repositorys').querySelector('.form-group:not(#repoConfig)').style.display = 'block';
-    });
-
     // Carrega dados salvos ao iniciar
     chrome.storage.local.get(['repositoriesData', 'azureConfig'], async (result) => {
         if (result.azureConfig) {
             repositoriesData.allRepos = await fetchRepositories(result.azureConfig.token);
-            if (result.repositoriesData) {
+
+            if (result.repositoriesData && result.repositoriesData.allRepos.length !== 0) {
                 repositoriesData = result.repositoriesData;
-                loadMainReposList();
-                updateAvailableReposDropdown();
             }
+
+            for (const repoId in repositoriesData.repoConfigs) {
+                console.log("Configurando repositório", repoId);
+                updateLinkedReposLists(repoId);
+                updateAvailableLinkedReposDropdowns(repoId);
+            }
+
+            loadMainReposList();
+            updateAvailableReposDropdown();
             return;
         }
         alert("Token não encontrado. Por favor, configure o token no menu de configurações.");
