@@ -1,4 +1,4 @@
-import { getAllTeamMembers } from './api_azure.mjs';
+import { getAllTeamMembers } from './../model/api_azure.mjs';
 
 
 export async function StartModule() {

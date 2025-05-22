@@ -3,7 +3,7 @@ let lastScript = null;
 
 async function createControllerScript(moduleName) {
     const script = document.createElement('script');
-    script.src = `/scripts/controller/popup/${moduleName}.mjs`;
+    script.src = `/scripts/js/controller/${moduleName}.mjs`;
     script.type = `module`;
     document.body.appendChild(script);
     lastScript = script;
@@ -23,7 +23,7 @@ function removeLastScript() {
 }
 
 async function loadClickedTabContent(tabName) {
-    const response = await fetch(`/scripts/view/html/popup/${tabName}.html`);
+    const response = await fetch(`/scripts/html/${tabName}.html`);
     const html = await response.text();
     document.getElementById('tab-content').innerHTML = html;
 }
@@ -43,7 +43,7 @@ function onClickTab(evt) {
             alert('Por favor, insira o token na página principal primeiro');
             return;
         }
-        loadTabContent(evt.target, btn.dataset.tab);
+        loadTabContent(evt.target, evt.target.dataset.tab);
     });
 }
 
