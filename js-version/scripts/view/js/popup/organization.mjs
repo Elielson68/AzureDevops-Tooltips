@@ -90,38 +90,36 @@ function initializeScreen() {
 
     document.getElementById('saveConfig').addEventListener('click', saveConfig);
 
-    chrome.storage.local.get(['azureConfig'], async (result) => {
 
-        chrome.storage.local.get([
-            'azureConfig',
-            'organization',
-            'project',
-            'team'
-        ], async (data) => {
-            console.log("Dados carregados: ", data);
+    chrome.storage.local.get([
+        'azureConfig',
+        'organization',
+        'project',
+        'team'
+    ], async (data) => {
+        console.log("Dados carregados: ", data);
 
-            if (data.azureConfig) {
-                const organization = await fetchOrganizations(result.azureConfig.token);
-                await populateSelect(selectOrganizationId, organization);
-                const project = await fetchProjects(result.azureConfig.token, data.organization);
-                await populateSelect(selectProjectId, project);
-                const team = await fetchTeams(result.azureConfig.token, data.project);
-                await populateSelect('team', team);
-            }
+        if (data.azureConfig) {
+            const organization = await fetchOrganizations(data.azureConfig.token);
+            await populateSelect(selectOrganizationId, organization);
+            const project = await fetchProjects(data.azureConfig.token, data.organization);
+            await populateSelect(selectProjectId, project);
+            const team = await fetchTeams(data.azureConfig.token, data.project);
+            await populateSelect('team', team);
+        }
 
-            if (data.organization) document.getElementById(selectOrganizationId).value = data.organization;
+        if (data.organization) document.getElementById(selectOrganizationId).value = data.organization;
 
-            if (data.project) {
-                const selectProject = document.getElementById(selectProjectId);
-                selectProject.value = data.project;
-                selectProject.disabled = false;
-            }
-            if (data.team) {
-                const selectTeam = document.getElementById('team');
-                selectTeam.value = data.team;
-                selectTeam.disabled = false;
-            }
-        });
+        if (data.project) {
+            const selectProject = document.getElementById(selectProjectId);
+            selectProject.value = data.project;
+            selectProject.disabled = false;
+        }
+        if (data.team) {
+            const selectTeam = document.getElementById('team');
+            selectTeam.value = data.team;
+            selectTeam.disabled = false;
+        }
     });
 }
 
