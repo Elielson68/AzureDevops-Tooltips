@@ -3,7 +3,7 @@ let lastScript = null;
 
 async function createControllerScript(moduleName) {
     const script = document.createElement('script');
-    script.src = `/scripts/js/controller/${moduleName}.mjs`;
+    script.src = `/scripts/js/controller/${moduleName}.mjs?ts=${Date.now()}`;
     script.type = `module`;
     document.body.appendChild(script);
     lastScript = script;
