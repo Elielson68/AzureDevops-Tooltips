@@ -1,7 +1,7 @@
 export async function LoadData() {
     return new Promise(resolve => {
         chrome.storage.local.get([
-            'token',
+            'azureConfig',
             'organization',
             'project'
         ], resolve);
@@ -11,12 +11,12 @@ export async function LoadData() {
 export async function updateTasks() {
 
     const config = await LoadData();
-    if (!config.token || !config.organization || !config.project) {
+    if (!config.azureConfig.token || !config.organization || !config.project) {
         throw new Error('Por favor, configure o token, organização e projeto antes de continuar.');
     }
 
     // Codifica token para Basic Auth
-    const authToken = btoa(`:${config.token}`);
+    const authToken = btoa(`:${config.azureConfig.token}`);
 
     // URL base
     const baseUrl = `https://dev.azure.com/${config.organization}/${config.project}`;
