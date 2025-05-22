@@ -1,40 +1,59 @@
 let lastTab = null;
 let lastScript = null;
 
-export async function StartModule() {
-    async function loadTabContent(navButton, tabName) {
-        lastTab?.classList.remove('active');
-        lastTab = navButton;
-        navButton.classList.add('active');
+async function createControllerScript(moduleName) {
+    const script = document.createElement('script');
+    script.src = `/scripts/controller/popup/${moduleName}.mjs`;
+    script.type = `module`;
+    document.body.appendChild(script);
+    lastScript = script;
+}
 
-        if (lastScript) {
-            lastScript.remove();
-            lastScript = null;
-        }
+function changeTabActiveState(navButton) {
+    lastTab?.classList.remove('active');
+    lastTab = navButton;
+    navButton.classList.add('active');
+}
 
-        const response = await fetch(`/scripts/view/html/popup/${tabName}.html`);
-        const html = await response.text();
-        document.getElementById('tab-content').innerHTML = html;
-
-
-        const script = document.createElement('script');
-        script.src = `/scripts/view/js/popup/${tabName}.mjs`;
-        document.body.appendChild(script);
-        lastScript = script;
+function removeLastScript() {
+    if (lastScript) {
+        lastScript.remove();
+        lastScript = null;
     }
+}
 
-    loadTabContent(document.querySelectorAll('.nav-tab')[0], 'main');
+async function loadClickedTabContent(tabName) {
+    const response = await fetch(`/scripts/view/html/popup/${tabName}.html`);
+    const html = await response.text();
+    document.getElementById('tab-content').innerHTML = html;
+}
 
+async function loadTabContent(navButton, tabName) {
+    changeTabActiveState(navButton);
+    removeLastScript();
+
+    await loadClickedTabContent(tabName);
+
+    createControllerScript(tabName);
+}
+
+function onClickTab(evt) {
+    chrome.storage.local.get(['azureConfig'], (result) => {
+        if (!result.azureConfig) {
+            alert('Por favor, insira o token na página principal primeiro');
+            return;
+        }
+        loadTabContent(evt.target, btn.dataset.tab);
+    });
+}
+
+function getFirstTab() {
+    return document.querySelectorAll('.nav-tab')[0];
+}
+
+export async function StartModule() {
+    loadTabContent(getFirstTab(), 'main');
     document.querySelectorAll('.nav-tab').forEach(btn => {
-        btn.addEventListener('click', evt => {
-            chrome.storage.local.get(['azureConfig'], (result) => {
-
-                if (!result.azureConfig) {
-                    alert('Por favor, insira o token na página principal primeiro');
-                    return;
-                }
-                loadTabContent(evt.target, btn.dataset.tab);
-            })
-        });
+        btn.addEventListener('click', onClickTab);
     });
 }
