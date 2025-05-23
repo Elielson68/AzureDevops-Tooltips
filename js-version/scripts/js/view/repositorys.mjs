@@ -2,28 +2,19 @@ console.log("Carregou repositorys.mjs");
 
 async function initializeScreen() {
 
-    let repositoriesData = {
-        allRepos: [],
-        mainRepos: [],
-        linkedRepos: [],
-        repoConfigs: {}
-    };
-    let currentRepoId = null;
-
-
-
     // Configurar repositório
     function setupRepoConfig(repoId) {
         const repo = repositoriesData.allRepos.find(r => r.id === repoId);
         document.getElementById('currentRepoName').textContent = repo.name;
 
         // Inicializa configuração se não existir
-        if (!repositoriesData.repoConfigs[repoId]) {
-            repositoriesData.repoConfigs[repoId] = {
-                submodules: [],
-                packages: []
-            };
-        }
+        //TODO: criar método para criar novo campo
+        // if (!repositoriesData.repoConfigs[repoId]) {
+        //     repositoriesData.repoConfigs[repoId] = {
+        //         submodules: [],
+        //         packages: []
+        //     };
+        // }
 
         // Atualiza listas
         updateLinkedReposLists(repoId);
@@ -34,68 +25,10 @@ async function initializeScreen() {
         document.getElementById('repoConfig').style.display = 'block';
     }
 
-    // Funções auxiliares
-    async function fetchRepositories(token) {
-        // Implemente a chamada à API para obter os repositórios
-        // Exemplo: return await callAzureDevOpsApi(`https://dev.azure.com/{organization}/_apis/git/repositories`, token);
-        return [
-            { id: 'repo1', name: 'Repositório 1' },
-            { id: 'repo2', name: 'Repositório 2' },
-            { id: 'repo3', name: 'Repositório 3' }
-        ]; // Exemplo
-    }
 
-    function updateAvailableReposDropdown() {
-        const availableRepos = repositoriesData.allRepos
-            .filter(repo => !repositoriesData.mainRepos.includes(repo.id) && !repositoriesData.linkedRepos.includes(repo.id));
 
-        const select = document.getElementById('availableRepos');
-        select.innerHTML = '';
-
-        if (availableRepos.length === 0) {
-            select.innerHTML = '<option value="">Nenhum repositório disponível</option>';
-            return;
-        }
-
-        availableRepos.forEach(repo => {
-            const option = document.createElement('option');
-            option.value = repo.id;
-            option.textContent = repo.name;
-            select.appendChild(option);
-        });
-    }
-
-    function loadMainReposList() {
-        const dropdown = document.getElementById('mainReposDropdown');
-        const configureDropdown = document.getElementById('configureDropdown');
-        configureDropdown.addEventListener("change", onSelectRepositoryToConfigure);
-
-        // Limpa os dropdowns
-        dropdown.innerHTML = '';
-        configureDropdown.innerHTML = '<option value="">Selecione um repositório...</option>';
-
-        if (repositoriesData.mainRepos.length === 0) {
-            dropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
-            return;
-        }
-
-        repositoriesData.mainRepos.forEach(repoId => {
-            const repo = repositoriesData.allRepos.find(r => r.id === repoId);
-            if (!repo) return;
-
-            // Adiciona ao dropdown de visualização/remoção
-            const option = document.createElement('option');
-            option.value = repoId;
-            option.textContent = repo.name;
-            dropdown.appendChild(option.cloneNode(true));
-
-            // Adiciona ao dropdown de configuração
-            configureDropdown.appendChild(option);
-        });
-    }
-
-    function updateLinkedReposLists(repoId) {
-        const config = repositoriesData.repoConfigs[repoId] || { submodules: [], packages: [] };
+    function updateLinkedReposLists(repoId, repoConfigs) {
+        const config = repoConfigs[repoId] || { submodules: [], packages: [] };
 
         // Atualiza lista de submodules
         const linkedReposList = document.getElementById('linkedReposList');
@@ -190,20 +123,7 @@ async function initializeScreen() {
         updateAvailableReposDropdown();
     }
 
-    // Adicionar repositório principal
-    document.getElementById('addMainRepo').addEventListener('click', () => {
-        const repoSelect = document.getElementById('availableRepos');
-        const repoId = repoSelect.value;
 
-        if (repoId && !repositoriesData.mainRepos.includes(repoId)) {
-            repositoriesData.mainRepos.push(repoId);
-            saveRepositoriesData();
-            loadMainReposList();
-            updateLinkedReposLists(currentRepoId);
-            updateAvailableLinkedReposDropdowns(currentRepoId);
-            updateAvailableReposDropdown();
-        }
-    });
 
     // Exemplo de uso
     document.getElementById('addLinkedRepo').addEventListener('click', () => {
@@ -281,4 +201,65 @@ async function initializeScreen() {
     });
 }
 
-initializeScreen();
+export function updateAvailableReposDropdown(availableRepos) {
+    const select = document.getElementById('availableRepos');
+    select.innerHTML = '';
+
+    if (availableRepos.length === 0) {
+        select.innerHTML = '<option value="">Nenhum repositório disponível</option>';
+        return;
+    }
+
+    console.log(availableRepos);
+
+    availableRepos.forEach(repo => {
+        const option = document.createElement('option');
+        option.value = repo.id;
+        option.textContent = repo.name;
+        select.appendChild(option);
+    });
+}
+
+function addFromAvaiableDropdownToMainDropdown() {
+    const avaiableDropdown = document.getElementById('availableRepos');
+    const mainRepoDropdown = document.getElementById('mainReposDropdown');
+    const configureDropdown = document.getElementById('configureDropdown');
+
+    // Limpa os dropdowns
+    mainRepoDropdown.innerHTML = '';
+    configureDropdown.innerHTML = '<option value="">Selecione um repositório...</option>';
+
+    if (avaiableDropdown.innerHTML === '<option value="">Selecione um repositório...</option>') {
+        mainRepoDropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
+        return;
+    }
+
+    // Adiciona ao dropdown de visualização/remoção
+    const option = () => avaiableDropdown.options[avaiableDropdown.selectedIndex].cloneNode(true);
+    mainRepoDropdown.appendChild(option());
+    configureDropdown.appendChild(option());
+    avaiableDropdown.remove(avaiableDropdown.selectedIndex);
+}
+
+export function addEventListenerToAddMainRepoButton(event) {
+    document.getElementById('addMainRepo').addEventListener('click', event);
+}
+
+export function getDropdownsValues() {
+    const avaiableDropdown = document.getElementById('availableRepos');
+    const mainRepoDropdown = document.getElementById('mainReposDropdown');
+
+    const getDropdownValues = dropdown => {
+        return Array.from(dropdown.options).map(opt => opt.value);
+    }
+
+    return {
+        avaiableRepos: getDropdownValues(avaiableDropdown),
+        mainRepos: getDropdownValues(mainRepoDropdown)
+    };
+}
+
+export function registerAllEvents() {
+    addEventListenerToAddMainRepoButton(addFromAvaiableDropdownToMainDropdown);
+}
+

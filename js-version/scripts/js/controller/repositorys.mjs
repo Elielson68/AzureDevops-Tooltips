@@ -1,6 +1,14 @@
-import { getAllTeamMembers } from './../model/api_azure.mjs';
+import { fetchRepositories, LoadData } from "../model/repositorys.mjs";
+import { addEventListenerToAddMainRepoButton, updateAvailableReposDropdown, getDropdownsValues, registerAllEvents } from "../view/repositorys.mjs";
 
+registerAllEvents();
 
-export async function StartModule() {
-    console.log(await getAllTeamMembers());
-}
+LoadData().then(async (data) => {
+    const token = data.azureConfig.token;
+    updateAvailableReposDropdown(await fetchRepositories(token));
+});
+
+addEventListenerToAddMainRepoButton(() => {
+    console.log(getDropdownsValues());
+});
+
