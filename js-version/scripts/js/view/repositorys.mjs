@@ -227,6 +227,7 @@ function addToMainAndConfigureDropdowns(option) {
 
     mainDropdown.appendChild(option.cloneNode(true));
     configureSelect.appendChild(option.cloneNode(true));
+    configureSelect.dispatchEvent(new Event('change'));
 }
 
 function removeFromMainAndConfigureDropdowns(index) {
@@ -235,6 +236,7 @@ function removeFromMainAndConfigureDropdowns(index) {
 
     mainDropdown.remove(index);
     configureSelect.remove(index);
+    configureSelect.dispatchEvent(new Event('change'));
 }
 
 function setInnerHTMLToMainAndConfigureDropdowns(innerHTML) {
@@ -294,7 +296,14 @@ function removeFromMainDropdownToAvaiableDropdown() {
 function onConfigureDropdownChange() {
     const configureDropdown = document.getElementById('configureDropdown');
     const style = document.getElementById('repoConfig-content').style;
-    style.display = configureDropdown.selectedIndex != 0 ? 'block' : 'none';
+    const selectedIndex = configureDropdown.selectedIndex;
+
+    if (configureDropdown.options.length === 0 || configureDropdown.options[selectedIndex].value === "") {
+        style.display = 'none';
+        return;
+    }
+
+    style.display = 'block';
 }
 
 export function updateAvailableReposDropdown(availableRepos) {
