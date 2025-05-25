@@ -1,4 +1,5 @@
 console.log("Carregou repositorys.mjs");
+let currentLinkedRepoTypeSelect = "submodules";
 
 async function initializeScreen() {
 
@@ -293,6 +294,25 @@ function removeFromMainDropdownToAvaiableDropdown() {
     }
 }
 
+function addToLinkedRepoDropdown() {
+    const linkedRepoSelect = document.getElementById('linkedReposDropdown');
+    const linkedRepoList = document.getElementById('linkedReposList');
+    const repo = linkedRepoSelect.options[linkedRepoSelect.selectedIndex];
+
+    const item = document.createElement('div');
+    item.className = 'repo-item linked-repo-type';
+    item.innerHTML = `
+        <span>${repo.textContent}</span>
+        <button class="remove-linked-repo" data-repo-id="${currentLinkedRepoTypeSelect}" data-type="${currentLinkedRepoTypeSelect}">Remover</button>
+    `;
+    linkedRepoList.appendChild(item);
+
+    const btn = item.querySelector('.remove-linked-repo');
+    btn.addEventListener('click', () => {
+        item.remove();
+    });
+}
+
 function onConfigureDropdownChange() {
     const configureDropdown = document.getElementById('configureDropdown');
     const style = document.getElementById('repoConfig-content').style;
@@ -328,8 +348,23 @@ export function addEventListenerToRemoveMainRepoButton(event) {
     document.getElementById('removeRepoBtn').addEventListener('click', event);
 }
 
+export function addEventListenerToAddLinkedRepoButton(event) {
+    document.getElementById('addLinkedRepo').addEventListener('click', event);
+}
+
 export function addEventListenerToConfigureRepoDropdown(event) {
     document.getElementById('configureDropdown').addEventListener('change', event);
+}
+
+export function addEventListenerToRadioGroup(callback) {
+    const radioGroup = document.querySelector('.radio-group');
+    if (radioGroup) {
+        radioGroup.addEventListener('change', (event) => {
+            if (event.target && event.target.type === 'radio') {
+                callback(event.target.value, event.target);
+            }
+        });
+    }
 }
 
 export function getDropdownsValues() {
@@ -353,5 +388,11 @@ export function registerAllEvents() {
     addEventListenerToAddMainRepoButton(removeFromAvaiableDropdownToMainDropdown);
     addEventListenerToRemoveMainRepoButton(removeFromMainDropdownToAvaiableDropdown);
     addEventListenerToConfigureRepoDropdown(onConfigureDropdownChange);
+
+    addEventListenerToRadioGroup((value, _) => {
+        currentLinkedRepoTypeSelect = value;
+    });
+
+    addEventListenerToAddLinkedRepoButton(addToLinkedRepoDropdown);
 }
 
