@@ -130,6 +130,7 @@ function onConfigureDropdownChange() {
 }
 
 export function updateAvailableReposDropdown(availableRepos) {
+    setInnerHTMLToAvaiableAndLinkedDropdowns(null);
     if (availableRepos.length === 0) {
         setInnerHTMLToAvaiableAndLinkedDropdowns('<option value="">Nenhum repositório disponível</option>');
         return;
@@ -140,6 +141,22 @@ export function updateAvailableReposDropdown(availableRepos) {
         option.value = repo.id;
         option.textContent = repo.name;
         addToAvaiableAndLinkedDropdowns(option);
+    });
+
+}
+
+export function updateMainReposDropdown(mainRepos) {
+    setInnerHTMLToMainAndConfigureDropdowns(null);
+    if (mainRepos.length === 0) {
+        setInnerHTMLToMainAndConfigureDropdowns('<option value="">Nenhum repositório adicionado</option>');
+        return;
+    }
+
+    mainRepos.forEach(repo => {
+        const option = document.createElement('option');
+        option.value = repo.id;
+        option.textContent = repo.name;
+        addToMainAndConfigureDropdowns(option);
     });
 }
 
@@ -153,6 +170,10 @@ export function addEventListenerToRemoveMainRepoButton(event) {
 
 export function addEventListenerToAddLinkedRepoButton(event) {
     document.getElementById('addLinkedRepo').addEventListener('click', event);
+}
+
+export function addEventListenerToSaveRepoConfigButton(event) {
+    document.getElementById('saveRepoConfig').addEventListener('click', event);
 }
 
 export function addEventListenerToConfigureRepoDropdown(event) {
@@ -175,7 +196,7 @@ export function getDropdownsValues() {
     const mainRepoDropdown = document.getElementById('mainReposDropdown');
 
     const getDropdownValues = dropdown => {
-        return Array.from(dropdown.options).map(opt => opt.value);
+        return Array.from(dropdown.options).filter(opt => opt.value != "").map(opt => ({ "id": opt.value, "name": opt.textContent }));
     }
 
     return {
@@ -185,9 +206,6 @@ export function getDropdownsValues() {
 }
 
 export function registerAllEvents() {
-    setInnerHTMLToAvaiableAndLinkedDropdowns('<option value="">Selecione um repositório...</option>');
-    setInnerHTMLToMainAndConfigureDropdowns('<option value="">Nenhum repositório adicionado</option>');
-
     addEventListenerToAddMainRepoButton(removeFromAvaiableDropdownToMainDropdown);
     addEventListenerToRemoveMainRepoButton(removeFromMainDropdownToAvaiableDropdown);
     addEventListenerToConfigureRepoDropdown(onConfigureDropdownChange);
@@ -197,5 +215,8 @@ export function registerAllEvents() {
     });
 
     addEventListenerToAddLinkedRepoButton(addToLinkedRepoDropdown);
+    addEventListenerToSaveRepoConfigButton(() => {
+        alert("Dados salvos com sucesso!");
+    });
 }
 

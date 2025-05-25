@@ -1,14 +1,19 @@
-import { fetchRepositories, LoadData } from "../model/repositorys.mjs";
-import { addEventListenerToAddMainRepoButton, updateAvailableReposDropdown, getDropdownsValues, registerAllEvents } from "../view/repositorys.mjs";
-
-registerAllEvents();
+import { LoadData, saveRepositoriesData, updateRepositoriesData } from "../model/repositorys.mjs";
+import { addEventListenerToAddMainRepoButton, updateAvailableReposDropdown, getDropdownsValues, registerAllEvents, addEventListenerToSaveRepoConfigButton, updateMainReposDropdown, addEventListenerToRemoveMainRepoButton } from "../view/repositorys.mjs";
 
 LoadData().then(async (data) => {
-    const token = data.azureConfig.token;
-    updateAvailableReposDropdown(await fetchRepositories(token));
-});
+    console.log('Dados carregados:', data);
+    registerAllEvents();
+    updateAvailableReposDropdown(data.avaiableRepos);
+    updateMainReposDropdown(data.mainRepos);
 
-addEventListenerToAddMainRepoButton(() => {
-    console.log(getDropdownsValues());
-});
+    addEventListenerToAddMainRepoButton(() => {
+        updateRepositoriesData(getDropdownsValues());
+    });
 
+    addEventListenerToRemoveMainRepoButton(() => {
+        updateRepositoriesData(getDropdownsValues());
+    });
+
+    addEventListenerToSaveRepoConfigButton(saveRepositoriesData);
+});
