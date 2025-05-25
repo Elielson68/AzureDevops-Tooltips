@@ -123,8 +123,6 @@ async function initializeScreen() {
         updateAvailableReposDropdown();
     }
 
-
-
     // Exemplo de uso
     document.getElementById('addLinkedRepo').addEventListener('click', () => {
         const repoType = getSelectedRepoType();
@@ -210,8 +208,6 @@ export function updateAvailableReposDropdown(availableRepos) {
         return;
     }
 
-    console.log(availableRepos);
-
     availableRepos.forEach(repo => {
         const option = document.createElement('option');
         option.value = repo.id;
@@ -225,24 +221,57 @@ function addFromAvaiableDropdownToMainDropdown() {
     const mainRepoDropdown = document.getElementById('mainReposDropdown');
     const configureDropdown = document.getElementById('configureDropdown');
 
-    // Limpa os dropdowns
-    mainRepoDropdown.innerHTML = '';
-    configureDropdown.innerHTML = '<option value="">Selecione um repositório...</option>';
+    const option = () => avaiableDropdown.options[avaiableDropdown.selectedIndex];
+    const opt = option();
 
-    if (avaiableDropdown.innerHTML === '<option value="">Selecione um repositório...</option>') {
-        mainRepoDropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
+    if (opt === null || opt === undefined || opt.value === "") {
         return;
     }
 
-    // Adiciona ao dropdown de visualização/remoção
-    const option = () => avaiableDropdown.options[avaiableDropdown.selectedIndex].cloneNode(true);
-    mainRepoDropdown.appendChild(option());
-    configureDropdown.appendChild(option());
+    if (mainRepoDropdown.options.length === 1 && mainRepoDropdown.options[0].value === "") {
+        mainRepoDropdown.remove(0);
+    }
+
+    mainRepoDropdown.appendChild(opt.cloneNode(true));
+    configureDropdown.appendChild(opt.cloneNode(true));
     avaiableDropdown.remove(avaiableDropdown.selectedIndex);
+
+    if (avaiableDropdown.options.length === 0) {
+        avaiableDropdown.innerHTML = '<option value="">Nenhum repositório disponível</option>';
+    }
+}
+
+function removeFromAvaiableDropdownToMainDropdown() {
+    const avaiableDropdown = document.getElementById('availableRepos');
+    const mainRepoDropdown = document.getElementById('mainReposDropdown');
+    const configureDropdown = document.getElementById('configureDropdown');
+
+    const option = () => mainRepoDropdown.options[mainRepoDropdown.selectedIndex];
+    const opt = option();
+
+    if (opt === null || opt === undefined || opt.value === "") {
+        return;
+    }
+
+    if (avaiableDropdown.options.length === 1 && avaiableDropdown.options[0].value === "") {
+        avaiableDropdown.remove(0);
+    }
+
+    avaiableDropdown.appendChild(opt.cloneNode(true));
+    configureDropdown.remove(mainRepoDropdown.selectedIndex);
+    mainRepoDropdown.remove(mainRepoDropdown.selectedIndex);
+
+    if (mainRepoDropdown.options.length === 0) {
+        mainRepoDropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
+    }
 }
 
 export function addEventListenerToAddMainRepoButton(event) {
     document.getElementById('addMainRepo').addEventListener('click', event);
+}
+
+export function addEventListenerToRemoveMainRepoButton(event) {
+    document.getElementById('removeRepoBtn').addEventListener('click', event);
 }
 
 export function getDropdownsValues() {
@@ -260,6 +289,13 @@ export function getDropdownsValues() {
 }
 
 export function registerAllEvents() {
+    const avaiableDropdown = document.getElementById('availableRepos');
+    const mainRepoDropdown = document.getElementById('mainReposDropdown');
+    const configureDropdown = document.getElementById('configureDropdown');
+
+    avaiableDropdown.innerHTML = '<option value="">Selecione um repositório...</option>';
+    mainRepoDropdown.innerHTML = '<option value="">Nenhum repositório adicionado</option>';
     addEventListenerToAddMainRepoButton(addFromAvaiableDropdownToMainDropdown);
+    addEventListenerToRemoveMainRepoButton(removeFromAvaiableDropdownToMainDropdown);
 }
 
