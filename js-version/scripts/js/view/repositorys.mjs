@@ -1,5 +1,8 @@
 console.log("Carregou repositorys.mjs");
 let currentLinkedRepoTypeSelect = "submodules";
+const linkedReposData = {}
+let allReposData = [];
+let allReposDataDict = {};
 
 function addToAvaiableAndLinkedDropdowns(option) {
     const avaiableDropdown = document.getElementById('availableRepos');
@@ -32,11 +35,15 @@ function addToMainAndConfigureDropdowns(option) {
     mainDropdown.appendChild(option.cloneNode(true));
     configureSelect.appendChild(option.cloneNode(true));
     configureSelect.dispatchEvent(new Event('change'));
+
+    linkedReposData[option.value] = [];
 }
 
 function removeFromMainAndConfigureDropdowns(index) {
     const mainDropdown = document.getElementById('mainReposDropdown');
     const configureSelect = document.getElementById('configureDropdown');
+
+    delete linkedReposData[configureSelect.options[index].value];
 
     mainDropdown.remove(index);
     configureSelect.remove(index);
@@ -98,15 +105,25 @@ function removeFromMainDropdownToAvaiableDropdown() {
 }
 
 function addToLinkedRepoDropdown() {
+    const configureDropdown = document.getElementById('configureDropdown');
     const linkedRepoSelect = document.getElementById('linkedReposDropdown');
-    const linkedRepoList = document.getElementById('linkedReposList');
     const repo = linkedRepoSelect.options[linkedRepoSelect.selectedIndex];
+    const repoParent = configureDropdown.options[configureDropdown.selectedIndex];
+
+    createItemOnLinkedReposList(repo.textContent, currentLinkedRepoTypeSelect);
+    addLinkedRepoToData(repoParent.value, repo.value, repo.textContent);
+
+    linkedRepoSelect.remove(linkedRepoSelect.selectedIndex);
+}
+
+function createItemOnLinkedReposList(itemName, itemType) {
+    const linkedRepoList = document.getElementById('linkedReposList');
 
     const item = document.createElement('div');
     item.className = 'repo-item linked-repo-type';
     item.innerHTML = `
-        <span>${repo.textContent}</span>
-        <button class="remove-linked-repo" data-repo-id="${currentLinkedRepoTypeSelect}" data-type="${currentLinkedRepoTypeSelect}">Remover</button>
+        <span>${itemName}</span>
+        <button class="remove-linked-repo" data-repo-id="${itemType}" data-type="${itemType}">Remover</button>
     `;
     linkedRepoList.appendChild(item);
 
@@ -116,9 +133,25 @@ function addToLinkedRepoDropdown() {
     });
 }
 
+function addLinkedRepoToData(repoLinkedParentId, repoId, repoName) {
+    if (!linkedReposData[repoLinkedParentId]) {
+        linkedReposData[repoLinkedParentId] = [];
+    }
+
+    linkedReposData[repoLinkedParentId].push({
+        id: repoId,
+        name: repoName,
+        type: currentLinkedRepoTypeSelect
+    });
+}
+
 function onConfigureDropdownChange() {
     const configureDropdown = document.getElementById('configureDropdown');
+    const linkedReposDropdown = document.getElementById('linkedReposDropdown');
+    const avaiableDropdown = document.getElementById('availableRepos');
+    const linkedRepoList = document.getElementById('linkedReposList');
     const style = document.getElementById('repoConfig-content').style;
+
     const selectedIndex = configureDropdown.selectedIndex;
 
     if (configureDropdown.options.length === 0 || configureDropdown.options[selectedIndex].value === "") {
@@ -126,7 +159,31 @@ function onConfigureDropdownChange() {
         return;
     }
 
+    const selectedRepoId = configureDropdown.options[selectedIndex].value;
+
+    linkedReposDropdown.innerHTML = avaiableDropdown.innerHTML;
+
+    const linkedRepos = linkedReposData[selectedRepoId] || [];
+    const linkedIds = linkedRepos.map(repo => repo.id);
+    Array.from(linkedReposDropdown.options).forEach(option => {
+        if (linkedIds.includes(option.value)) {
+            option.remove();
+        }
+    });
+
     style.display = 'block';
+    linkedRepoList.innerHTML = '';
+
+
+    linkedRepos.forEach(repo => {
+        createItemOnLinkedReposList(repo.name, repo.type);
+    });
+}
+
+//TODO: desenvolver
+function onLinkedReposDropdownChange() {
+    const linkedReposDropdown = document.getElementById('linkedReposDropdown');
+    const selectedIndex = linkedReposDropdown.selectedIndex;
 }
 
 export function updateAvailableReposDropdown(availableRepos) {
@@ -160,6 +217,14 @@ export function updateMainReposDropdown(mainRepos) {
     });
 }
 
+export function updateAllReposData(allRepos) {
+    allReposData = allRepos;
+    for (const repo of allRepos) {
+        allReposDataDict[repo.id] = repo;
+    }
+}
+
+
 export function addEventListenerToAddMainRepoButton(event) {
     document.getElementById('addMainRepo').addEventListener('click', event);
 }
@@ -178,6 +243,10 @@ export function addEventListenerToSaveRepoConfigButton(event) {
 
 export function addEventListenerToConfigureRepoDropdown(event) {
     document.getElementById('configureDropdown').addEventListener('change', event);
+}
+
+export function addEventListenerToLinkedReposDropdown(event) {
+    document.getElementById('linkedReposDropdown').addEventListener('change', event);
 }
 
 export function addEventListenerToRadioGroup(callback) {
@@ -208,13 +277,15 @@ export function getDropdownsValues() {
 export function registerAllEvents() {
     addEventListenerToAddMainRepoButton(removeFromAvaiableDropdownToMainDropdown);
     addEventListenerToRemoveMainRepoButton(removeFromMainDropdownToAvaiableDropdown);
+    addEventListenerToAddLinkedRepoButton(addToLinkedRepoDropdown);
+
     addEventListenerToConfigureRepoDropdown(onConfigureDropdownChange);
+    addEventListenerToLinkedReposDropdown(onLinkedReposDropdownChange);
 
     addEventListenerToRadioGroup((value, _) => {
         currentLinkedRepoTypeSelect = value;
     });
 
-    addEventListenerToAddLinkedRepoButton(addToLinkedRepoDropdown);
     addEventListenerToSaveRepoConfigButton(() => {
         alert("Dados salvos com sucesso!");
     });

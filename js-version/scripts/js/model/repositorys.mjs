@@ -1,4 +1,5 @@
 let repositoriesData = {
+    allRepositoriesData: [],
     avaiableRepos: [],
     mainRepos: [],
     linkedRepos: [],
@@ -14,12 +15,13 @@ export async function LoadData() {
             'repositoriesData'
         ], async (data) => {
             azureData = data.azureConfig;
+            repositoriesData.allRepositoriesData = await fetchRepositories(azureData.token);
             if (data.repositoriesData) {
                 Object.assign(repositoriesData, data.repositoriesData);
                 console.log('repositoriesData carregado do storage:', repositoriesData);
             }
             else {
-                repositoriesData.avaiableRepos = await fetchRepositories(azureData.token);
+                repositoriesData.avaiableRepos = repositoriesData.allRepositoriesData;
             }
             resolve(repositoriesData);
         });
@@ -40,7 +42,9 @@ export async function fetchRepositories(token) {
     return [
         { id: 'repo1', name: 'Repositório 1' },
         { id: 'repo2', name: 'Repositório 2' },
-        { id: 'repo3', name: 'Repositório 3' }
+        { id: 'repo3', name: 'Repositório 3' },
+        { id: 'repo4', name: 'Repositório 4' },
+        { id: 'repo5', name: 'Repositório 5' },
     ]; // Exemplo
 }
 
