@@ -218,13 +218,13 @@ export async function getClosedTasksFromWorkItem(workItemId) {
     return filtered_tasks;
 }
 
-export async function getAllTeams() {
-    const url = `https://dev.azure.com/${api_links.data_config.organization}/_apis/projects/${api_links.data_config.project}/teams?api-version=7.1`;
+export async function getAllTeams(organization, project) {
+    const url = `https://dev.azure.com/${organization}/_apis/projects/${project}/teams?api-version=7.1`;
 
     try {
         const response = await requests.get(url);
         const data = await response.json();
-        return data.value;
+        return data.value.map(x => x.name);
     } catch (error) {
         console.error('Erro ao obter times:', error);
         return [];
@@ -244,7 +244,7 @@ export async function getTeamMembers(teamId) {
     }
 }
 
-export async function getAllTeamMembers() {
+export async function getAllTeamMembers(organization, project) {
     const teams = await getAllTeams();
     const team = teams.find(t => t.name === api_links.data_config.team);
 

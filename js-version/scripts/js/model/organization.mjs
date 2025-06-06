@@ -1,4 +1,4 @@
-import { getProjects } from "./api_azure.mjs";
+import { getAllTeams, getProjects } from "./api_azure.mjs";
 
 let azureData = {}
 
@@ -6,30 +6,8 @@ export async function fetchProjects() {
     return await getProjects(azureData.organization.organization);
 }
 
-export async function fetchTeams() {
-    // Implemente a chamada à API para obter os times
-    // Exemplo: return await callAzureDevOpsApi(`https://dev.azure.com/${organization}/${project}/_apis/teams`, token);
-    return ['Time1', 'Time2', 'Time3']; // Exemplo
-}
-
-export function getData() {
-    return azureData;
-}
-
-export function getOrganization() {
-    return azureData.organization;
-}
-
-export function getProject() {
-    return azureData.project;
-}
-
-export function getTeam() {
-    return azureData.team;
-}
-
-export function getTokenValue() {
-    return azureData.azureConfig.token;
+export async function fetchTeams(project) {
+    return await getAllTeams(azureData.organization.organization, project);
 }
 
 export function saveConfig(projectValue, teamValue) {
