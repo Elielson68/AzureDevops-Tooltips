@@ -1,14 +1,8 @@
-import { getProjects } from "./api_azure.mjs";
-
-
 export async function getTokenValue() {
     return new Promise((resolve) => {
         chrome.storage.local.get(['azureConfig', 'organization'], async (result) => {
             console.log(result)
             if (result.azureConfig) {
-
-                await getProjects(result.organization.organization);
-
                 resolve([result.azureConfig.token, result.organization.organization]);
             } else {
                 resolve([null, null]);
