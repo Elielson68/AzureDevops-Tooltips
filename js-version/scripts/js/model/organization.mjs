@@ -1,16 +1,9 @@
-import { getUserOrganizations as getUserOrganization } from "./api_azure.mjs";
-
+import { getProjects } from "./api_azure.mjs";
 
 let azureData = {}
 
-export async function fetchOrganization() {
-    return await getUserOrganization();
-}
-
 export async function fetchProjects() {
-    // Implemente a chamada à API para obter os projetos
-    // Exemplo: return await callAzureDevOpsApi(`https://dev.azure.com/${organization}/_apis/projects`, token);
-    return ['Projeto1', 'Projeto2', 'Projeto3']; // Exemplo
+    return await getProjects(azureData.organization.organization);
 }
 
 export async function fetchTeams() {

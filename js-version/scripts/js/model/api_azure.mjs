@@ -3,18 +3,17 @@ import * as requests from "./requests.mjs";
 
 let pr_data_global = {};
 
-export async function getUserOrganizations() {
-    try {
-        const userId = await getMyId();
-        console.log("MEU ID", userId);
-        const orgsResponse = await requests.get(api_links.USER_ORGS(userId));
-        const orgsData = await orgsResponse.json();
 
-        console.log("Organizações:", orgsData.value);
-        return orgsData.value;
-    } catch (error) {
-        console.error("Erro:", error);
+export async function getProjects(organization) {
+    const projects = await requests.get(api_links.USER_PROJECTS(organization));
+    const projectsData = await projects.json();
+
+    if (!projectsData) {
+        return;
     }
+
+    const projectsNames = projectsData.value.map(x => x.name);
+    return projectsNames;
 }
 
 export async function updateTasks() {

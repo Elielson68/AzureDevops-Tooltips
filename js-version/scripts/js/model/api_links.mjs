@@ -41,5 +41,8 @@ export const WORK_ITEM_INFO = (work_item_id) =>
 export const USER_INFO_BY_NAME = (user_name) =>
     `https://vsaex.dev.azure.com/${data_config.organization}/_apis/userentitlements?$filter=name+eq+%27${user_name}%27&api-version=7.1-preview.4`;
 
+export const USER_PROJECTS = (organization) =>
+    `https://dev.azure.com/${organization}/_apis/projects?api-version=7.1`;
+
 export const USER_WORK_ITEMS =
     `${base_api_project_link}/_apis/wit/wiql?api-version=7.1`;
