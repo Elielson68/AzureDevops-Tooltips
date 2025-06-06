@@ -2,7 +2,7 @@ import { LoadData, saveRepositoriesData, updateRepositoriesData } from "../model
 import {
     addEventListenerToAddMainRepoButton, updateAvailableReposDropdown, getDropdownsValues,
     registerAllEvents, addEventListenerToSaveRepoConfigButton, updateMainReposDropdown,
-    addEventListenerToRemoveMainRepoButton, updateAllReposData
+    addEventListenerToRemoveMainRepoButton
 } from "../view/repositorys.mjs";
 
 LoadData().then(async (data) => {
@@ -10,7 +10,6 @@ LoadData().then(async (data) => {
     registerAllEvents();
     updateAvailableReposDropdown(data.avaiableRepos);
     updateMainReposDropdown(data.mainRepos);
-    updateAllReposData(data.allRepositoriesData);
 
     addEventListenerToAddMainRepoButton(() => {
         updateRepositoriesData(getDropdownsValues());
