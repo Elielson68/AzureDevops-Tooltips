@@ -3,6 +3,7 @@ import {
     updateAvailableReposDropdown, getDropdownsValues,
     registerAllEvents, addEventListenerToSaveRepoConfigButton, updateMainReposDropdown,
     getLinkedReposData,
+    updateLinkedReposList,
 
 } from "../view/repositorys.mjs";
 
@@ -11,6 +12,7 @@ LoadData().then(async (data) => {
     registerAllEvents();
     updateAvailableReposDropdown(data.avaiableRepos);
     updateMainReposDropdown(data.mainRepos);
+    updateLinkedReposList(data.linkedReposData);
 
     addEventListenerToSaveRepoConfigButton(() => {
         updateRepositoriesData(getDropdownsValues());

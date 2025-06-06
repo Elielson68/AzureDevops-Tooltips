@@ -245,6 +245,11 @@ export function updateMainReposDropdown(mainRepos) {
     });
 }
 
+export function updateLinkedReposList(data) {
+    Object.assign(linkedReposData, data);
+    onConfigureDropdownChange();
+}
+
 export function addEventListenerToSaveRepoConfigButton(event) {
     document.getElementById('saveRepoConfig').addEventListener('click', event);
 }

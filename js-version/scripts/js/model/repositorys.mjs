@@ -3,7 +3,8 @@ let repositoriesData = {
     avaiableRepos: [],
     mainRepos: [],
     linkedRepos: [],
-    mainRepoConfigs: {}
+    mainRepoConfigs: {},
+    linkedReposData: {}
 };
 
 let azureData = null;
