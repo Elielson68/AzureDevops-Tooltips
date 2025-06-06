@@ -1,4 +1,3 @@
-export const selectOrganizationId = "organization_select";
 export const selectProjectId = "project";
 export const selectTeamId = "team";
 
@@ -20,10 +19,6 @@ export async function populateSelect(selectId, items) {
         option.textContent = item;
         select.appendChild(option);
     });
-}
-
-export function addEventListenerToOrganizationSelect(event) {
-    document.getElementById(selectOrganizationId).addEventListener('change', event);
 }
 
 export function addEventListenerToProjectSelect(event) {

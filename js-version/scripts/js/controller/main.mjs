@@ -1,17 +1,19 @@
-import { getInputTokenValue, setEventListenerToSaveTokenButton, setInputTokenValue } from "/scripts/js/view/main.mjs";
-import { getTokenValue, setTokenValue } from "/scripts/js/model/main.mjs";
+import { getInputOrganizationValue, getInputTokenValue, setEventListenerToSaveTokenButton, setInputOrganizationValue, setInputTokenValue } from "../view/main.mjs";
+import { getTokenValue, saveValues } from "../model/main.mjs";
 
 async function populeInputTokenValue() {
-    const token = await getTokenValue();
+    const [token, organization] = await getTokenValue();
     setInputTokenValue(token);
+    setInputOrganizationValue(organization);
 }
 
-async function saveTokenValue() {
+async function save() {
     const token = getInputTokenValue();
-    await setTokenValue(token);
+    const organization = getInputOrganizationValue();
+    await saveValues(token, organization);
 }
 
 populeInputTokenValue();
 setEventListenerToSaveTokenButton(() => {
-    saveTokenValue();
+    save();
 });

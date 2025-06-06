@@ -1,17 +1,18 @@
 export async function getTokenValue() {
     return new Promise((resolve) => {
-        chrome.storage.local.get(['azureConfig'], (result) => {
+        chrome.storage.local.get(['azureConfig', 'organization'], (result) => {
+            console.log(result)
             if (result.azureConfig) {
-                resolve(result.azureConfig.token);
+                resolve([result.azureConfig.token, result.organization.organization]);
             } else {
-                resolve(null);
+                resolve([null, null]);
             }
         });
     });
 }
 
-export async function setTokenValue(token) {
-    chrome.storage.local.set({ azureConfig: { token } }, () => {
+export async function saveValues(token, organization) {
+    chrome.storage.local.set({ azureConfig: { token }, organization: { organization }, }, () => {
         alert('Token salvo com sucesso!');
     });
 }

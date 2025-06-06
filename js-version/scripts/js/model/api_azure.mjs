@@ -3,6 +3,20 @@ import * as requests from "./requests.mjs";
 
 let pr_data_global = {};
 
+export async function getUserOrganizations() {
+    try {
+        const userId = await getMyId();
+        console.log("MEU ID", userId);
+        const orgsResponse = await requests.get(api_links.USER_ORGS(userId));
+        const orgsData = await orgsResponse.json();
+
+        console.log("Organizações:", orgsData.value);
+        return orgsData.value;
+    } catch (error) {
+        console.error("Erro:", error);
+    }
+}
+
 export async function updateTasks() {
     try {
 

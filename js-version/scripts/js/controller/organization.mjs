@@ -1,24 +1,18 @@
-import { LoadData, fetchOrganizations, fetchProjects, fetchTeams, getTokenValue, saveConfig } from "../model/organization.mjs";
+import { LoadData, fetchProjects, fetchTeams, getTokenValue, saveConfig } from "../model/organization.mjs";
 import {
-    addEventListenerToOrganizationSelect, addEventListenerToProjectSelect,
+    addEventListenerToProjectSelect,
     addEventListenerToSaveConfigButton, getSelectValue, populateSelect,
-    selectOrganizationId, selectProjectId, selectTeamId, setSelectValue
+    selectProjectId, selectTeamId, setSelectValue
 } from "../view/organization.mjs";
 
 
 LoadData().then(async data => {
     console.log("Passou no carregamento");
     if (data) {
-        const organization = await fetchOrganizations(data.azureConfig.token);
-        await populateSelect(selectOrganizationId, organization);
-        const project = await fetchProjects(data.azureConfig.token, data.organization);
+        const project = await fetchProjects();
         await populateSelect(selectProjectId, project);
-        const team = await fetchTeams(data.azureConfig.token, data.project);
+        const team = await fetchTeams();
         await populateSelect(selectTeamId, team);
-    }
-
-    if (data.organization) {
-        setSelectValue(selectOrganizationId, data.organization);
     }
 
     if (data.project) {
@@ -27,29 +21,17 @@ LoadData().then(async data => {
     if (data.team) {
         setSelectValue(selectTeamId, data.team);
     }
-});
 
-addEventListenerToOrganizationSelect(async () => {
-    const org = getSelectValue(selectOrganizationId);
 
-    if (org) {
-        try {
-            const projects = await fetchProjects(getTokenValue(), org);
-            populateSelect(selectProjectId, projects);
-        } catch (error) {
-            console.error('Erro ao carregar projetos:', error);
-        }
-    }
 });
 
 addEventListenerToProjectSelect(async () => {
     const token = getTokenValue();
-    const org = getSelectValue(selectOrganizationId);
     const project = getSelectValue(selectProjectId);
 
     if (project) {
         try {
-            const teams = await fetchTeams(token, org, project);
+            const teams = await fetchTeams(token, project);
             populateSelect(selectTeamId, teams);
         } catch (error) {
             console.error('Erro ao carregar times:', error);
@@ -57,6 +39,6 @@ addEventListenerToProjectSelect(async () => {
     }
 });
 
-addEventListenerToSaveConfigButton(() => saveConfig(getSelectValue(selectOrganizationId), getSelectValue(selectProjectId), getSelectValue(selectTeamId)));
+addEventListenerToSaveConfigButton(() => saveConfig(getSelectValue(selectProjectId), getSelectValue(selectTeamId)));
 
 
