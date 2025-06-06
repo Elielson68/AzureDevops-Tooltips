@@ -202,6 +202,18 @@ function onConfigureDropdownChange() {
     });
 }
 
+function addEventListenerToAddMainRepoButton(event) {
+    document.getElementById('addMainRepo').addEventListener('click', event);
+}
+
+function addEventListenerToRemoveMainRepoButton(event) {
+    document.getElementById('removeRepoBtn').addEventListener('click', event);
+}
+
+function addEventListenerToAddLinkedRepoButton(event) {
+    document.getElementById('addLinkedRepo').addEventListener('click', event);
+}
+
 export function updateAvailableReposDropdown(availableRepos) {
     setInnerHTMLToAvaiableAndLinkedDropdowns(null);
     if (availableRepos.length === 0) {
@@ -231,18 +243,6 @@ export function updateMainReposDropdown(mainRepos) {
         option.textContent = repo.name;
         addToMainAndConfigureDropdowns(option);
     });
-}
-
-export function addEventListenerToAddMainRepoButton(event) {
-    document.getElementById('addMainRepo').addEventListener('click', event);
-}
-
-export function addEventListenerToRemoveMainRepoButton(event) {
-    document.getElementById('removeRepoBtn').addEventListener('click', event);
-}
-
-export function addEventListenerToAddLinkedRepoButton(event) {
-    document.getElementById('addLinkedRepo').addEventListener('click', event);
 }
 
 export function addEventListenerToSaveRepoConfigButton(event) {
@@ -280,6 +280,10 @@ export function getDropdownsValues() {
         avaiableRepos: getDropdownValues(avaiableDropdown),
         mainRepos: getDropdownValues(mainRepoDropdown)
     };
+}
+
+export function getLinkedReposData() {
+    return { linkedReposData: linkedReposData };
 }
 
 export function registerAllEvents() {
