@@ -1,3 +1,5 @@
+import { getRepositories } from "./api_azure.mjs";
+
 let repositoriesData = {
     allRepositoriesData: [],
     avaiableRepos: [],
@@ -13,10 +15,12 @@ export async function LoadData() {
     return new Promise((resolve) => {
         chrome.storage.local.get([
             'azureConfig',
-            'repositoriesData'
+            'repositoriesData',
+            'organization',
+            'project'
         ], async (data) => {
             azureData = data.azureConfig;
-            repositoriesData.allRepositoriesData = await fetchRepositories(azureData.token);
+            repositoriesData.allRepositoriesData = await fetchRepositories(data.organization.organization, data.project);
             if (data.repositoriesData) {
                 Object.assign(repositoriesData, data.repositoriesData);
                 console.log('repositoriesData carregado do storage:', repositoriesData);
@@ -29,24 +33,14 @@ export async function LoadData() {
     });
 }
 
-// Salva o objeto repositoriesData no chrome.storage.local
 export function saveRepositoriesData() {
     chrome.storage.local.set({ repositoriesData }, () => {
         console.log('repositoriesData salvo no storage:', repositoriesData);
     });
 }
 
-// Funções auxiliares
-export async function fetchRepositories(token) {
-    // Implemente a chamada à API para obter os repositórios
-    // Exemplo: return await callAzureDevOpsApi(`https://dev.azure.com/{organization}/_apis/git/repositories`, token);
-    return [
-        { id: 'repo1', name: 'Repositório 1' },
-        { id: 'repo2', name: 'Repositório 2' },
-        { id: 'repo3', name: 'Repositório 3' },
-        { id: 'repo4', name: 'Repositório 4' },
-        { id: 'repo5', name: 'Repositório 5' },
-    ]; // Exemplo
+export async function fetchRepositories(organization, project) {
+    return await getRepositories(organization, project);
 }
 
 export function updateRepositoriesData(data) {

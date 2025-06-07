@@ -16,6 +16,13 @@ export async function getProjects(organization) {
     return projectsNames;
 }
 
+export async function getRepositories(organization, project) {
+    const repoResponse = await requests.get(api_links.GET_REPOS(organization, project));
+
+    const repoJsonData = await repoResponse.json();
+    return repoJsonData.value.map(x => { return { id: x.name, name: x.name } });
+}
+
 export async function updateTasks() {
     try {
 

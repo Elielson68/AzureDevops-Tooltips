@@ -44,5 +44,8 @@ export const USER_INFO_BY_NAME = (user_name) =>
 export const USER_PROJECTS = (organization) =>
     `https://dev.azure.com/${organization}/_apis/projects?api-version=7.1`;
 
+export const GET_REPOS = (organization, project) =>
+    `https://dev.azure.com/${organization}/${project}/_apis/git/repositories?api-version=7.1-preview.1`
+
 export const USER_WORK_ITEMS =
     `${base_api_project_link}/_apis/wit/wiql?api-version=7.1`;
