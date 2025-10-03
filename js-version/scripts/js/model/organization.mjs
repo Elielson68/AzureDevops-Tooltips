@@ -1,4 +1,4 @@
-import { getAllTeams, getProjects } from "./api_azure.mjs";
+import { getAllTeams, getProjects, getAllTeamMembersData } from "./api_azure.mjs";
 
 let azureData = {}
 
@@ -8,6 +8,11 @@ export async function fetchProjects() {
 
 export async function fetchTeams(project) {
     return await getAllTeams(azureData.organization.organization, project);
+}
+
+export async function fetchTeamMembersNames() {
+    let teammembers = await getAllTeamMembersData(azureData.organization.organization, azureData.project);
+    return teammembers.map(member => member.displayName);
 }
 
 export function saveConfig(projectValue, teamValue) {

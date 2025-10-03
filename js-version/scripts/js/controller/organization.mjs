@@ -1,8 +1,8 @@
-import { LoadData, fetchProjects, fetchTeams, saveConfig } from "../model/organization.mjs";
+import { LoadData, fetchProjects, fetchTeamMembersNames, fetchTeams, saveConfig } from "../model/organization.mjs";
 import {
     addEventListenerToProjectSelect,
     addEventListenerToSaveConfigButton, getSelectValue, populateSelect,
-    selectProjectId, selectTeamId, setSelectValue
+    selectProjectId, selectReviewersId, selectTeamId, setSelectValue
 } from "../view/organization.mjs";
 
 
@@ -13,6 +13,11 @@ LoadData().then(async data => {
         await populateSelect(selectProjectId, project);
         const team = await fetchTeams(project[0]);
         await populateSelect(selectTeamId, team);
+
+        if (data.project && data.team) {
+            const reviewers = await fetchTeamMembersNames();
+            await populateSelect(selectReviewersId, reviewers);
+        }
     }
 
     if (data.project) {

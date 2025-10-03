@@ -14,5 +14,27 @@
             <option value="">Selecione um projeto primeiro</option>
         </select>
     </div>
+
+    <h3>Configuração de revisores</h3>
+
+    <div class="form-group">
+        <label for="listReviewers">Adicionar Revisor</label>
+        <select id="listReviewers">
+            <option value="">Selecione um revisor primeiro</option>
+        </select>
+        <button type="button" id="addReviewer" class="secondary">Adicionar</button>
+    </div>
+
+    <div class="form-group">
+        <label for="listReviewers">Revisores Adicionados:</label>
+        <div class="dropdown-with-actions">
+            <select id="listAddReviewers" size="5" style="width: 100%; margin-bottom: 5px;">
+            </select>
+            <button type="button" id="removeReviewerBtn" class="danger" style="width: 100%;">Remover
+                Selecionado</button>
+        </div>
+    </div>
+
+
     <button type="button" id="saveConfig">Salvar Configuração</button>
 </div>

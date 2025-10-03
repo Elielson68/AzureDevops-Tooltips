@@ -238,6 +238,18 @@ export async function getAllTeams(organization, project) {
     }
 }
 
+async function getAllObjectTeams(organization, project) {
+    const url = `https://dev.azure.com/${organization}/_apis/projects/${project}/teams?api-version=7.1`;
+    try {
+        const response = await requests.get(url);
+        const data = await response.json();
+        return data.value;
+    } catch (error) {
+        console.error('Erro ao obter times:', error);
+        return [];
+    }
+}
+
 export async function getTeamMembers(teamId) {
     const url = `https://dev.azure.com/${api_links.data_config.organization}/_apis/projects/${api_links.data_config.project}/teams/${teamId}/members?api-version=7.1`;
 
@@ -251,12 +263,12 @@ export async function getTeamMembers(teamId) {
     }
 }
 
-export async function getAllTeamMembers(organization, project) {
-    const teams = await getAllTeams();
+export async function getAllTeamMembersData(organization, project) {
+    const teams = await getAllObjectTeams(organization, project);
     const team = teams.find(t => t.name === api_links.data_config.team);
-
     if (team) {
-        return await getTeamMembers(team.id);
+        const members = await getTeamMembers(team.id)
+        return members.map(member => member.identity);
     }
     return [];
 
