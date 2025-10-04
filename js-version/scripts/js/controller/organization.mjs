@@ -1,9 +1,9 @@
-import { LoadData, fetchProjects, fetchTeamMembersNames, fetchTeams, saveConfig } from "../model/organization.mjs";
+import { LoadData, fetchProjects, fetchTeamMembersNames, fetchTeams, saveConfig, saveReviewersConfig } from "../model/organization.mjs";
 import {
     addEventListenerToAddReviewerButton,
     addEventListenerToProjectSelect,
     addEventListenerToRemoveReviewerButton,
-    addEventListenerToSaveConfigButton, addSelectValue, getSelectValue, populateSelect,
+    addEventListenerToSaveConfigButton, addSelectValue, getSelectOptions, getSelectValue, populateSelect,
     removeSelectValue,
     selectAddReviewerId,
     selectProjectId, selectReviewersId, selectTeamId, setSelectValue
@@ -18,9 +18,13 @@ LoadData().then(async data => {
         const team = await fetchTeams(project[0]);
         await populateSelect(selectTeamId, team);
 
-        if (data.project && data.team) {
+        if (data.project && data.team && !data.listAvaiableReviewers && !data.selectedReviewers) {
             const reviewers = await fetchTeamMembersNames();
             await populateSelect(selectReviewersId, reviewers);
+        }
+        else if (data.listAvaiableReviewers && data.selectedReviewers) {
+            await populateSelect(selectReviewersId, data.listAvaiableReviewers);
+            await populateSelect(selectAddReviewerId, data.selectedReviewers);
         }
     }
 
@@ -51,11 +55,15 @@ addEventListenerToAddReviewerButton(() => {
     var reviewerName = getSelectValue(selectReviewersId);
     addSelectValue(selectAddReviewerId, reviewerName);
     removeSelectValue(selectReviewersId, reviewerName);
+
+    saveReviewersConfig(getSelectOptions(selectReviewersId), getSelectOptions(selectAddReviewerId));
 });
 
 addEventListenerToRemoveReviewerButton(() => {
     var reviewerName = getSelectValue(selectAddReviewerId);
     addSelectValue(selectReviewersId, reviewerName);
     removeSelectValue(selectAddReviewerId, reviewerName);
+
+    saveReviewersConfig(getSelectOptions(selectReviewersId), getSelectOptions(selectAddReviewerId));
 });
 

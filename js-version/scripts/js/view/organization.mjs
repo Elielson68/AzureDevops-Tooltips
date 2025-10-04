@@ -63,6 +63,11 @@ export function removeSelectValue(selectId, value) {
     }
 }
 
+export function getSelectOptions(selectId) {
+    const select = document.getElementById(selectId);
+    return Array.from(select.options).map(option => option.value);
+}
+
 export function setSelectValue(selectId, value, disableSelect = false) {
     const select = document.getElementById(selectId);
     select.value = value;

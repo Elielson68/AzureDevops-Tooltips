@@ -26,13 +26,24 @@ export function saveConfig(projectValue, teamValue) {
     });
 }
 
+export function saveReviewersConfig(listAvaiableReviewers, selectedReviewers) {
+    console.log("Configuração de revisores salva!");
+
+    chrome.storage.local.set({
+        listAvaiableReviewers: listAvaiableReviewers,
+        selectedReviewers: selectedReviewers
+    });
+}
+
 export async function LoadData() {
     return new Promise((resolve) => {
         chrome.storage.local.get([
             'azureConfig',
             'organization',
             'project',
-            'team'
+            'team',
+            'listAvaiableReviewers',
+            'selectedReviewers'
         ], (data) => {
             azureData = data;
             console.log("Dados carregados: ", azureData);
