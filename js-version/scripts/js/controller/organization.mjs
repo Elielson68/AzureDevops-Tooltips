@@ -1,7 +1,11 @@
 import { LoadData, fetchProjects, fetchTeamMembersNames, fetchTeams, saveConfig } from "../model/organization.mjs";
 import {
+    addEventListenerToAddReviewerButton,
     addEventListenerToProjectSelect,
-    addEventListenerToSaveConfigButton, getSelectValue, populateSelect,
+    addEventListenerToRemoveReviewerButton,
+    addEventListenerToSaveConfigButton, addSelectValue, getSelectValue, populateSelect,
+    removeSelectValue,
+    selectAddReviewerId,
     selectProjectId, selectReviewersId, selectTeamId, setSelectValue
 } from "../view/organization.mjs";
 
@@ -43,4 +47,15 @@ addEventListenerToProjectSelect(async () => {
 
 addEventListenerToSaveConfigButton(() => saveConfig(getSelectValue(selectProjectId), getSelectValue(selectTeamId)));
 
+addEventListenerToAddReviewerButton(() => {
+    var reviewerName = getSelectValue(selectReviewersId);
+    addSelectValue(selectAddReviewerId, reviewerName);
+    removeSelectValue(selectReviewersId, reviewerName);
+});
+
+addEventListenerToRemoveReviewerButton(() => {
+    var reviewerName = getSelectValue(selectAddReviewerId);
+    addSelectValue(selectReviewersId, reviewerName);
+    removeSelectValue(selectAddReviewerId, reviewerName);
+});
 
