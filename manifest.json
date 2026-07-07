@@ -26,7 +26,8 @@
         "scripts/js/model/api_links.mjs",
         "scripts/js/model/api_azure.mjs",
         "scripts/js/model/requests.mjs",
-        "scripts/js/view/modal.mjs"
+        "scripts/js/view/modal.mjs",
+        "common/storage.js"
       ],
       "matches": [
         "<all_urls>"
@@ -38,17 +39,24 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_popup": "/scripts/html/popup.html",
-    "default_encoding": "UTF-8",
+    "default_title": "Azure DevOps Tooltips (abre o painel lateral)",
     "default_icon": {
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "panel/panel.html"
+  },
   "permissions": [
     "activeTab",
     "storage",
-    "webRequest"
+    "webRequest",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://dev.azure.com/*",

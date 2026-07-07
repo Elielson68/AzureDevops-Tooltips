@@ -7,7 +7,8 @@ import {
 
 } from "../view/repositorys.mjs";
 
-LoadData().then(async (data) => {
+export async function init() {
+    const data = await LoadData();
     console.log('Dados carregados:', data);
     registerAllEvents();
     updateAvailableReposDropdown(data.avaiableRepos);
@@ -19,4 +20,4 @@ LoadData().then(async (data) => {
         updateRepositoriesData(getLinkedReposData());
         saveRepositoriesData();
     });
-});
+}

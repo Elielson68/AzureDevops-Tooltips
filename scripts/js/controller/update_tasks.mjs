@@ -21,4 +21,6 @@ async function startUpdateTasks() {
     }
 }
 
-addEventListenerToUpdateButton(startUpdateTasks);
+export async function init() {
+    addEventListenerToUpdateButton(startUpdateTasks);
+}

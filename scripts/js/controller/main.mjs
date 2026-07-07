@@ -13,7 +13,9 @@ async function save() {
     await saveValues(token, organization);
 }
 
-populeInputTokenValue();
-setEventListenerToSaveTokenButton(() => {
-    save();
-});
+export async function init() {
+    await populeInputTokenValue();
+    setEventListenerToSaveTokenButton(() => {
+        save();
+    });
+}

@@ -1,0 +1,241 @@
+/**
+ * panel/panel.css
+ * -------------------------------------------------------------------------
+ * Estilo do side panel. Adaptado do CSS que antes vivia inline em
+ * popup.html: a diferença principal é que um popup tinha largura fixa
+ * (350px) e altura de conteúdo; o side panel ocupa toda a altura/largura
+ * que o Chrome reserva para ele, então o layout aqui usa flex em coluna
+ * com a área de abas rolando de forma independente.
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 320px;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+}
+
+.panel-title {
+    margin: 10px 15px;
+    flex-shrink: 0;
+}
+
+.nav-tabs {
+    display: flex;
+    background-color: #f3f2f1;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.nav-tab {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.nav-tab.active {
+    background-color: #0078d7;
+    color: white;
+}
+
+#tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 15px 15px 15px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #106ebe;
+}
+
+#status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+.success {
+    background-color: #dff6dd;
+    color: #107c10;
+}
+
+.error {
+    background-color: #fde7e9;
+    color: #a80000;
+}
+
+.loading {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#mainReposDropdown {
+    margin-bottom: 10px;
+    height: 20%;
+}
+
+.repo-item button {
+    width: auto;
+    padding: 4px 8px;
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.dropdown-with-actions {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    background: white;
+}
+
+select[multiple],
+select[size] {
+    min-height: 100px;
+    border: 1px solid #ccc;
+}
+
+button.danger {
+    background-color: #a4262c;
+}
+
+button.danger:hover {
+    background-color: #8a1c22;
+}
+
+#repos {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#repos::-webkit-scrollbar {
+    width: 8px;
+}
+
+#repos::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#repos::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+#repos::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+}
+
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radio-checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #0078d7;
+    border-radius: 50%;
+}
+
+.radio-option:hover input~.radio-checkmark {
+    background-color: #f1f1f1;
+}
+
+.radio-option input:checked~.radio-checkmark {
+    background-color: #0078d7;
+}
+
+.radio-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.radio-option input:checked~.radio-checkmark:after {
+    display: block;
+}
+
+.radio-option .radio-checkmark:after {
+    top: 4px;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+}
